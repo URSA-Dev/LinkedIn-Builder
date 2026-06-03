@@ -7,7 +7,7 @@
 <link rel="icon" href="/ursa-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&family=Spectral:ital,wght@0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -129,10 +129,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .li-sk2{background:#eef3f8;color:#0a66c2;border-radius:16px;padding:4px 12px;font-size:12px;font-weight:500}
 .li-card .tweak-inline input{background:#fff;border-color:#d7dbe0;color:#1d2226}
 /* Banner generator */
-.banner-grid{margin-top:10px}
-.banner-item{border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg)}
-.banner-item canvas{display:block;width:100%;height:auto}
-.banner-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;font-size:11px;color:var(--muted)}
+/* Banner studio */
+.bn-tabs{display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.bn-tab{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:6px 14px;font-size:12px;color:var(--muted);cursor:pointer;font-family:var(--font);transition:.15s}
+.bn-tab:hover{color:var(--text);border-color:var(--accent)}
+.bn-tab.on{color:var(--accent);border-color:var(--accent);background:rgba(79,142,247,.1)}
+.bn-preview{border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#000;line-height:0}
+.bn-preview canvas{display:block;width:100%;height:auto}
+.bn-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+@media(max-width:600px){.bn-fields{grid-template-columns:1fr}}
+.bn-field{display:flex;flex-direction:column;gap:4px}
+.bn-field span{font-size:11px;color:var(--muted)}
+.bn-field input{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 11px;color:var(--text);font-family:var(--font);font-size:13px}
+.bn-field input:focus{outline:none;border-color:var(--accent)}
 /* Chat panel */
 .chat-panel{margin-top:16px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;overflow:hidden}
 .chat-head{padding:11px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:7px}
@@ -264,13 +273,31 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
       </div>
     </div>
 
-    <!-- Ursa LinkedIn banners -->
+    <!-- Ursa LinkedIn banner studio -->
     <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:4px">
-        <div style="font-size:14px;font-weight:600">🎨 Ursa LinkedIn banner</div>
-        <div style="font-size:11px;color:var(--muted)">Download, then set as your LinkedIn cover photo</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+        <div style="font-size:14px;font-weight:600">🎨 Ursa LinkedIn banner studio</div>
+        <div style="font-size:11px;color:var(--muted)">1584×396 · pick a template, edit the text, download &amp; set as your LinkedIn cover</div>
       </div>
-      <div id="bannerGrid" class="banner-grid"></div>
+      <div class="bn-tabs">
+        <button type="button" class="bn-tab on" data-variant="classic" onclick="setVariant('classic')">Classic</button>
+        <button type="button" class="bn-tab" data-variant="emblem" onclick="setVariant('emblem')">Emblem</button>
+        <button type="button" class="bn-tab" data-variant="dossier" onclick="setVariant('dossier')">Dossier</button>
+        <span style="flex:1"></span>
+        <button type="button" class="bn-tab" id="bnTheme" onclick="toggleBannerTheme()">◐ Dark</button>
+      </div>
+      <div class="bn-preview"><canvas id="bannerCanvas" width="1584" height="396"></canvas></div>
+      <div class="bn-fields">
+        <label class="bn-field" style="grid-column:1/-1"><span>Name</span><input id="bn-name" type="text" maxlength="40"></label>
+        <label class="bn-field"><span>Line 1</span><input id="bn-b1" type="text" maxlength="60"></label>
+        <label class="bn-field"><span>Line 2</span><input id="bn-b2" type="text" maxlength="60"></label>
+        <label class="bn-field"><span>Line 3</span><input id="bn-b3" type="text" maxlength="60"></label>
+        <label class="bn-field" id="bn-code-wrap" style="display:none"><span>File code (Dossier)</span><input id="bn-code" type="text" maxlength="32"></label>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn btn-green btn-sm" onclick="downloadBanner()">⬇ Download banner (1584×396 PNG)</button>
+        <button class="btn btn-outline btn-sm" onclick="resetBannerText()">↺ Reset text from profile</button>
+      </div>
     </div>
 
     <!-- Copy kit -->
@@ -502,7 +529,8 @@ function renderOutput(p){
   document.getElementById('prev-meta').textContent=(p.location||'')+(companyN?' · '+companyN:'');
   const roleEl=document.getElementById('prev-role');
   if(roleEl) roleEl.textContent=(p.title||'')+(companyN?'  ·  '+companyN:'');
-  renderBanners();
+  if(!bannerState.init){syncBannerFromProfile();bannerState.init=true;}
+  renderBannerStudio();
 }
 
 function renderPills(id,items,cls){
@@ -545,6 +573,7 @@ function copyAll(){
 function resetAll(){
   resumeContent='';
   generatedProfile=null;
+  bannerState.init=false;
   chatHistory=[];
   const log=document.getElementById('chatLog');
   if(log) log.innerHTML='<div class="chat-empty" id="chatEmpty">Ask me to refine anything —<br>"make the headline punchier", "shorten the About",<br>or "what keywords help for fintech roles?"</div>';
@@ -678,111 +707,190 @@ function copySkills(btn){
   const t=btn.textContent;btn.textContent='✓';setTimeout(()=>btn.textContent=t,1500);
 }
 
-/* ===== Ursa LinkedIn banner generator (1584×396) ===== */
-// Preload the real Ursa logo and build white-recoloured versions (full lockup +
-// cropped bear) so the banner is on-brand and stays downloadable (same-origin).
-const LOGO={};
-const logoReady=new Promise(resolve=>{
-  const img=new Image();
-  img.onload=()=>{
-    const w=img.naturalWidth,h=img.naturalHeight;
-    LOGO.full=whiteCanvas(img,0,0,w,h);
-    LOGO.bear=whiteCanvas(img,0,0,Math.round(w*0.40),h); // bear occupies the left ~40%
-    resolve(true);
-    if(generatedProfile) renderBanners();
-  };
-  img.onerror=()=>resolve(false);
-  img.src='/ursa-logo.png';
-});
-function whiteCanvas(img,sx,sy,sw,sh){
-  const c=document.createElement('canvas');c.width=sw;c.height=sh;
-  const x=c.getContext('2d');
-  x.drawImage(img,sx,sy,sw,sh,0,0,sw,sh);
-  x.globalCompositeOperation='source-in';
-  x.fillStyle='#ffffff';x.fillRect(0,0,sw,sh);
-  return c;
-}
-function bannerData(){
-  const p=generatedProfile||{};
-  return {
-    name:p.name||'Your Name',
-    headline:(p.headline||p.title||'').trim(),
-    company:(document.getElementById('b-company').value||'Ursa Mobile').trim()
-  };
-}
-async function renderBanners(){
-  const grid=document.getElementById('bannerGrid');
-  if(!grid) return;
-  if(document.fonts&&document.fonts.ready){try{await document.fonts.ready;}catch(e){}}
-  try{await logoReady;}catch(e){}
-  const d=bannerData();
-  // Single Ursa banner — shown as the mock cover and offered for download.
-  const mb=document.getElementById('mockBanner');
-  if(mb){mb.textContent='';const mc=mkCanvas();drawBanner(mc.getContext('2d'),1584,396,d);mb.appendChild(mc);}
-  grid.textContent='';
-  const item=document.createElement('div');item.className='banner-item';
-  const c=mkCanvas();drawBanner(c.getContext('2d'),1584,396,d);
-  const row=document.createElement('div');row.className='banner-row';
-  const lbl=document.createElement('span');lbl.textContent='Ursa banner · 1584×396 (LinkedIn cover size)';
-  const btn=document.createElement('button');btn.className='btn btn-green btn-sm';btn.textContent='⬇ Download banner';
-  btn.onclick=()=>downloadCanvas(c,'ursa-linkedin-banner.png');
-  row.appendChild(lbl);row.appendChild(btn);
-  item.appendChild(c);item.appendChild(row);grid.appendChild(item);
+/* ===== Ursa LinkedIn banner studio — 3 templates from Claude Design handoff ===== */
+const BANNER_SANS="'Space Grotesk', sans-serif";
+const BANNER_SERIF="'Spectral', serif";
+const BANNER_MONO="'IBM Plex Mono', monospace";
+const BN_ACCENT='#8FA0B8';
+
+// Low-poly URSA bear (viewBox 460×300, facing right), drawn as a wireframe.
+const BEAR={n0:[418,104],n1:[372,86],n2:[322,66],n3:[300,40],n4:[282,66],n5:[250,74],n6:[175,52],n7:[110,68],n8:[44,92],n9:[42,150],n10:[60,236],n11:[52,262],n12:[96,262],n13:[104,200],n14:[150,210],n15:[210,214],n16:[206,258],n17:[242,258],n18:[250,206],n19:[270,200],n20:[300,210],n21:[296,260],n22:[336,260],n23:[342,206],n24:[322,168],n25:[340,140],n26:[372,120],n27:[414,118]};
+const BEAR_OUTLINE=['n0','n1','n2','n3','n4','n5','n6','n7','n8','n9','n10','n11','n12','n13','n14','n15','n16','n17','n18','n19','n20','n21','n22','n23','n24','n25','n26','n27'];
+const BEAR_FACETS=[['n5','n24'],['n2','n26'],['n2','n5'],['n6','n24'],['n6','n19'],['n7','n14'],['n8','n13'],['n6','n8'],['n5','n19'],['n6','n14'],['n7','n19'],['n24','n19'],['n13','n14'],['n5','n25'],['n18','n15'],['n19','n23'],['n14','n15'],['n7','n8']];
+
+function colorsFor(dark){
+  return { dark,
+    bg: dark?'#0A0D14':'#EFEDE6', bg2: dark?'#161D2B':'#FFFFFF',
+    ink: dark?'#FFFFFF':'#14161C', frame: dark?'rgba(255,255,255,0.16)':'rgba(0,0,0,0.14)',
+    accent: BN_ACCENT };
 }
 function mkCanvas(){const c=document.createElement('canvas');c.width=1584;c.height=396;return c;}
 function downloadCanvas(c,name){
-  c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);});
+  c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);},'image/png');
 }
-function lgrad(ctx,x0,y0,x1,y1,a,b){const g=ctx.createLinearGradient(x0,y0,x1,y1);g.addColorStop(0,a);g.addColorStop(1,b);return g;}
 function clip(ctx,t,maxW){t=t||'';if(ctx.measureText(t).width<=maxW)return t;while(t.length>1&&ctx.measureText(t+'…').width>maxW)t=t.slice(0,-1);return t+'…';}
-function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function setLS(ctx,px){try{ctx.letterSpacing=px+'px';}catch(e){}}
+function withA(ctx,a,fn){ctx.save();ctx.globalAlpha=a;fn();ctx.restore();}
+function bearColor(c){return c.dark?c.accent:c.ink;}
 
-// Ursa Mobile signature LinkedIn banner (1584×396). On-brand: monochrome,
-// authoritative (defense / national-security identity), real logo + bear motif.
-// Key text stays in the safe zone above LinkedIn's bottom-left photo overlap.
-function drawBanner(ctx,W,H,d){
-  // deep charcoal base with a subtle diagonal gradient
-  const bg=ctx.createLinearGradient(0,0,W,H);
-  bg.addColorStop(0,'#15171d');bg.addColorStop(0.55,'#0d0f14');bg.addColorStop(1,'#07080b');
-  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-  // faint hairline frame
-  ctx.strokeStyle='rgba(255,255,255,0.09)';ctx.lineWidth=2;ctx.strokeRect(26,26,W-52,H-52);
-
-  // oversized geometric bear watermark, right side
-  if(LOGO.bear){
-    const s=(H*0.96)/LOGO.bear.height, dw=LOGO.bear.width*s, dh=LOGO.bear.height*s;
-    ctx.save();ctx.globalAlpha=0.08;ctx.drawImage(LOGO.bear,W-dw-40,(H-dh)/2,dw,dh);ctx.restore();
-  }
-
-  // brand lockup (real white logo), top-left
-  if(LOGO.full){
-    const lh=38, lw=LOGO.full.width*(lh/LOGO.full.height);
-    ctx.drawImage(LOGO.full,62,50,lw,lh);
-  }
-  // corporate descriptor
-  ctx.textAlign='left';ctx.textBaseline='top';
-  ctx.fillStyle='rgba(255,255,255,0.45)';ctx.font='500 13px "DM Mono"';
-  ctx.fillText('ADVANCED NATIONAL SECURITY SOLUTIONS',64,100);
-
-  // employee name
-  ctx.fillStyle='#ffffff';ctx.font='700 54px "DM Sans"';
-  ctx.fillText(clip(ctx,d.name||'',W-200),64,142);
-
-  // value-prop lines parsed from the headline (split on | or ·)
-  const parts=(d.headline||'').split(/\s*[|·]\s*/).map(s=>s.trim()).filter(Boolean).slice(0,3);
-  ctx.font='400 23px "DM Sans"';
-  let y=212;
-  parts.forEach(p=>{
-    ctx.fillStyle='rgba(255,255,255,0.4)';ctx.fillText('—',64,y);
-    ctx.fillStyle='rgba(226,230,240,0.9)';ctx.fillText(clip(ctx,p,W-360),100,y);
-    y+=35;
-  });
-
-  // url, bottom-right (safe from photo overlap)
-  ctx.textAlign='right';ctx.textBaseline='alphabetic';
-  ctx.fillStyle='rgba(255,255,255,0.7)';ctx.font='500 21px "DM Mono"';
-  ctx.fillText('ursamobile.com',W-58,H-46);
+function drawBear(ctx,bx,by,bw,bh,color,op){
+  const vbW=460,vbH=300,s=Math.min(bw/vbW,bh/vbH);
+  const ox=bx+(bw-vbW*s)/2, oy=by+(bh-vbH*s)/2;
+  const P=k=>[ox+BEAR[k][0]*s, oy+BEAR[k][1]*s];
+  ctx.save();ctx.globalAlpha=op;ctx.strokeStyle=color;ctx.lineWidth=1.4;ctx.lineJoin='round';ctx.lineCap='round';
+  ctx.beginPath();
+  BEAR_OUTLINE.forEach((k,i)=>{const q=P(k);i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]);});
+  ctx.closePath();ctx.stroke();
+  BEAR_FACETS.forEach(f=>{const a=P(f[0]),b=P(f[1]);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();});
+  ctx.restore();
 }
+function bgFill(ctx,W,H,c){
+  ctx.fillStyle=c.bg;ctx.fillRect(0,0,W,H);
+  const rg=ctx.createRadialGradient(W*0.72,H*0.18,0,W*0.72,H*0.18,W*0.92);
+  rg.addColorStop(0,c.bg2);rg.addColorStop(0.62,c.bg);rg.addColorStop(1,c.bg);
+  ctx.fillStyle=rg;ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle=c.frame;ctx.lineWidth=1;ctx.strokeRect(14.5,14.5,W-29,H-29);
+}
+function ticks(ctx,W,H,c){
+  const m=26,len=14;
+  withA(ctx,0.34,()=>{ctx.fillStyle=c.ink;
+    ctx.fillRect(m,m,len,1);ctx.fillRect(m,m,1,len);
+    ctx.fillRect(W-m-len,m,len,1);ctx.fillRect(W-m-1,m,1,len);
+    ctx.fillRect(m,H-m-1,len,1);ctx.fillRect(m,H-m-len,1,len);
+    ctx.fillRect(W-m-len,H-m-1,len,1);ctx.fillRect(W-m-1,H-m-len,1,len);
+  });
+}
+function wordmark(ctx,x,y,c,scale){
+  scale=scale||1;ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.fillStyle=c.ink;ctx.font='700 '+(30*scale)+'px '+BANNER_SANS;setLS(ctx,1.2*scale);
+  ctx.fillText('URSA',x,y+27*scale);setLS(ctx,0);
+  withA(ctx,0.85,()=>{ctx.fillStyle=c.ink;ctx.fillRect(x,y+34*scale,26*scale,2);});
+  withA(ctx,0.7,()=>{ctx.fillStyle=c.ink;ctx.font='500 '+(9.5*scale)+'px '+BANNER_SERIF;setLS(ctx,3.2*scale);ctx.fillText('MOBILE',x+34*scale,y+41*scale);});
+  setLS(ctx,0);
+}
+function tagline(ctx,x,y,c,align){
+  withA(ctx,0.62,()=>{ctx.fillStyle=c.ink;ctx.font='500 16px '+BANNER_SERIF;ctx.textAlign=align||'left';ctx.textBaseline='alphabetic';setLS(ctx,4.16);ctx.fillText('ADVANCED NATIONAL SECURITY SOLUTIONS',x,y);});
+  setLS(ctx,0);ctx.textAlign='left';
+}
+function urlText(ctx,x,y,c,align){
+  withA(ctx,0.55,()=>{ctx.fillStyle=c.ink;ctx.font='italic 400 20px '+BANNER_SERIF;ctx.textAlign=align||'right';ctx.textBaseline='alphabetic';setLS(ctx,0.8);ctx.fillText('ursamobile.com',x,y);});
+  setLS(ctx,0);ctx.textAlign='left';
+}
+
+function drawClassic(ctx,W,H,d,c){
+  bgFill(ctx,W,H,c);ticks(ctx,W,H,c);
+  drawBear(ctx,W-52-520,(H-290)/2,520,290,bearColor(c),0.55);
+  const M=56,colRight=W-540;
+  wordmark(ctx,M,M,c,1);
+  withA(ctx,0.14,()=>{ctx.fillStyle=c.ink;ctx.fillRect(M,120,360,1);});
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.fillStyle=c.ink;ctx.font='700 58px '+BANNER_SANS;setLS(ctx,-0.9);
+  ctx.fillText(clip(ctx,d.name,colRight-M),M,196);setLS(ctx,0);
+  ctx.font='400 25px '+BANNER_SANS;let y=236;
+  [d.b1,d.b2,d.b3].filter(Boolean).forEach(t=>{
+    withA(ctx,0.4,()=>{ctx.fillStyle=c.ink;ctx.fillText('—',M,y);});
+    withA(ctx,0.86,()=>{ctx.fillStyle=c.ink;ctx.fillText(clip(ctx,t,colRight-M-40),M+40,y);});
+    y+=37;
+  });
+  tagline(ctx,M,H-52,c,'left');
+  urlText(ctx,W-56,H-52,c,'right');
+}
+
+function drawEmblem(ctx,W,H,d,c){
+  bgFill(ctx,W,H,c);
+  drawBear(ctx,(W-600)/2,(H-330)/2,600,330,bearColor(c),0.55*0.72);
+  const cx=W/2;
+  ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.font='700 '+(30*0.82)+'px '+BANNER_SANS;setLS(ctx,1.2*0.82);
+  const uw=ctx.measureText('URSA').width;setLS(ctx,0);const half=uw/2;
+  withA(ctx,0.35,()=>{ctx.fillStyle=c.ink;ctx.fillRect(cx-half-20-70,86,70,1);ctx.fillRect(cx+half+20,86,70,1);});
+  ctx.fillStyle=c.ink;ctx.font='700 '+(30*0.82)+'px '+BANNER_SANS;setLS(ctx,1.2*0.82);ctx.fillText('URSA',cx,92);setLS(ctx,0);
+  withA(ctx,0.7,()=>{ctx.fillStyle=c.ink;ctx.font='500 '+(9.5*0.82)+'px '+BANNER_SERIF;setLS(ctx,3.2*0.82);ctx.fillText('MOBILE',cx,108);});setLS(ctx,0);
+  ctx.fillStyle=c.ink;ctx.font='700 56px '+BANNER_SANS;setLS(ctx,-0.56);
+  ctx.fillText(clip(ctx,d.name,W-220),cx,168);setLS(ctx,0);
+  const items=[d.b1,d.b2,d.b3].filter(Boolean);
+  ctx.font='400 21px '+BANNER_SANS;
+  withA(ctx,0.82,()=>{ctx.fillStyle=c.ink;ctx.fillText(clip(ctx,items.join('   ·   '),W-180),cx,206);});
+  tagline(ctx,cx,248,c,'center');
+  urlText(ctx,W-60,H-34,c,'right');
+}
+
+function drawDossier(ctx,W,H,d,c){
+  bgFill(ctx,W,H,c);
+  drawBear(ctx,W-36-560,(H-320)/2,560,320,bearColor(c),0.55);
+  withA(ctx,0.9,()=>{ctx.fillStyle=c.accent;ctx.fillRect(56,56,2,H-112);});
+  const x=88,right=W-620,top=56,bottom=H-56;
+  wordmark(ctx,x,top,c,0.86);
+  withA(ctx,0.5,()=>{ctx.fillStyle=c.ink;ctx.font='400 13px '+BANNER_MONO;ctx.textAlign='right';ctx.textBaseline='alphabetic';setLS(ctx,2.86);ctx.fillText(d.code||'',right,top+20);});
+  setLS(ctx,0);ctx.textAlign='left';
+  const midY=200;
+  withA(ctx,1,()=>{ctx.fillStyle=c.accent;ctx.fillRect(x,midY-26,18,2);});
+  withA(ctx,0.5,()=>{ctx.fillStyle=c.ink;ctx.font='400 11.5px '+BANNER_MONO;ctx.textBaseline='alphabetic';setLS(ctx,3.45);ctx.fillText('PERSONNEL',x+28,midY-20);});
+  setLS(ctx,0);
+  ctx.fillStyle=c.ink;ctx.font='700 60px '+BANNER_SANS;setLS(ctx,-0.9);
+  ctx.fillText(clip(ctx,d.name,right-x),x,midY+40);setLS(ctx,0);
+  ctx.font='400 21px '+BANNER_SANS;let bx=x;const by=midY+82;
+  const items=[d.b1,d.b2,d.b3].filter(Boolean);
+  items.forEach((t,i)=>{
+    withA(ctx,0.85,()=>{ctx.fillStyle=c.ink;ctx.font='400 21px '+BANNER_SANS;ctx.fillText(t,bx,by);});
+    ctx.font='400 21px '+BANNER_SANS;bx+=ctx.measureText(t).width+13;
+    if(i<items.length-1){withA(ctx,0.9,()=>{ctx.fillStyle=c.accent;ctx.font='400 18px '+BANNER_SANS;ctx.fillText('/',bx,by);});bx+=12;}
+  });
+  tagline(ctx,x,bottom,c,'left');
+  urlText(ctx,right,bottom,c,'right');
+}
+
+function drawVariant(ctx,W,H,d,variant,dark){
+  const c=colorsFor(dark);
+  if(variant==='emblem') drawEmblem(ctx,W,H,d,c);
+  else if(variant==='dossier') drawDossier(ctx,W,H,d,c);
+  else drawClassic(ctx,W,H,d,c);
+}
+
+/* ----- studio state, render, edit, download ----- */
+const bannerState={variant:'classic',dark:true,init:false};
+function bnData(){
+  const v=id=>{const el=document.getElementById(id);return el?el.value:'';};
+  return { name:v('bn-name')||'Your Name', b1:v('bn-b1'), b2:v('bn-b2'), b3:v('bn-b3'), code:v('bn-code') };
+}
+function syncBannerFromProfile(){
+  const p=generatedProfile||{};
+  const parts=(p.headline||'').split(/\s*[|·]\s*/).map(s=>s.trim()).filter(Boolean);
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val;};
+  set('bn-name',p.name||'Your Name');
+  set('bn-b1',parts[0]||(p.title?(p.title+' at Ursa Mobile'):'Senior Engineer at Ursa Mobile'));
+  set('bn-b2',parts[1]||'Driving Innovation & Professional Growth');
+  set('bn-b3',parts[2]||'Open to Connecting');
+  set('bn-code','U-STAT // PROFILE 2026');
+}
+async function renderBannerStudio(){
+  if(document.fonts&&document.fonts.ready){try{await document.fonts.ready;}catch(e){}}
+  const d=bnData();
+  const cv=document.getElementById('bannerCanvas');
+  if(cv) drawVariant(cv.getContext('2d'),1584,396,d,bannerState.variant,bannerState.dark);
+  const mb=document.getElementById('mockBanner');
+  if(mb){mb.textContent='';const mc=mkCanvas();drawVariant(mc.getContext('2d'),1584,396,d,bannerState.variant,bannerState.dark);mb.appendChild(mc);}
+}
+function downloadBanner(){
+  const c=mkCanvas();
+  drawVariant(c.getContext('2d'),1584,396,bnData(),bannerState.variant,bannerState.dark);
+  downloadCanvas(c,'ursa-linkedin-banner-'+bannerState.variant+(bannerState.dark?'-dark':'-light')+'.png');
+}
+function resetBannerText(){syncBannerFromProfile();renderBannerStudio();}
+function setVariant(v){
+  bannerState.variant=v;
+  document.querySelectorAll('#step4 .bn-tab[data-variant]').forEach(b=>b.classList.toggle('on',b.dataset.variant===v));
+  const cw=document.getElementById('bn-code-wrap');if(cw)cw.style.display=(v==='dossier')?'':'none';
+  renderBannerStudio();
+}
+function toggleBannerTheme(){
+  bannerState.dark=!bannerState.dark;
+  const btn=document.getElementById('bnTheme');if(btn)btn.textContent=bannerState.dark?'◐ Dark':'◑ Light';
+  renderBannerStudio();
+}
+document.addEventListener('input',e=>{
+  if(e.target&&['bn-name','bn-b1','bn-b2','bn-b3','bn-code'].includes(e.target.id)) renderBannerStudio();
+});
 </script>
 </body>
 </html>
