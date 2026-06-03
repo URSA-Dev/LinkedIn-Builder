@@ -681,7 +681,7 @@ function bannerData(){
   const p=generatedProfile||{};
   return {
     name:p.name||'Your Name',
-    headline:(p.headline||'').split(/[·|]/)[0].trim()||p.title||'',
+    headline:(p.headline||p.title||'').trim(),
     company:(document.getElementById('b-company').value||'Ursa Mobile').trim()
   };
 }
@@ -711,14 +711,49 @@ function lgrad(ctx,x0,y0,x1,y1,a,b){const g=ctx.createLinearGradient(x0,y0,x1,y1
 function clip(ctx,t,maxW){t=t||'';if(ctx.measureText(t).width<=maxW)return t;while(t.length>1&&ctx.measureText(t+'…').width>maxW)t=t.slice(0,-1);return t+'…';}
 function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
 
+// Ursa Mobile signature LinkedIn banner (1584×396). Premium dark composition;
+// keeps key text in the safe zone above LinkedIn's bottom-left profile-photo overlap.
 function drawBanner(ctx,W,H,d){
-  ctx.fillStyle=lgrad(ctx,0,0,W,H,'#4f8ef7','#8b5cf6');ctx.fillRect(0,0,W,H);
-  ctx.save();ctx.globalAlpha=.13;ctx.fillStyle='#fff';ctx.font='800 470px "DM Sans"';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText('U',W-20,H/2+30);ctx.restore();
-  ctx.textAlign='left';ctx.textBaseline='top';
-  ctx.fillStyle='rgba(255,255,255,.85)';ctx.font='500 26px "DM Mono"';ctx.fillText((d.company||'Ursa Mobile').toUpperCase(),70,58);
-  ctx.fillStyle='#fff';ctx.font='700 78px "DM Sans"';ctx.fillText(clip(ctx,d.name,W-520),68,150);
-  ctx.fillStyle='rgba(255,255,255,.92)';ctx.font='400 32px "DM Sans"';ctx.fillText(clip(ctx,d.headline,W-520),70,250);
-  ctx.fillStyle='rgba(255,255,255,.72)';ctx.font='500 22px "DM Mono"';ctx.fillText('ursamobile.com',70,H-52);
+  // base
+  ctx.fillStyle='#0b0d12';ctx.fillRect(0,0,W,H);
+  // right-side brand glow
+  const g=ctx.createRadialGradient(W*0.80,H*0.46,30,W*0.80,H*0.46,W*0.62);
+  g.addColorStop(0,'rgba(139,92,246,0.55)');
+  g.addColorStop(0.45,'rgba(79,142,247,0.20)');
+  g.addColorStop(1,'rgba(11,13,18,0)');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  // left brand accent edge
+  ctx.fillStyle=lgrad(ctx,0,0,0,H,'#4f8ef7','#8b5cf6');ctx.fillRect(0,0,8,H);
+  // oversized translucent "U" monogram
+  ctx.save();ctx.globalAlpha=0.10;ctx.fillStyle='#ffffff';ctx.font='800 540px "DM Sans"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('U',W*0.83,H/2+40);ctx.restore();
+
+  // brand lockup: gradient logo tile + wordmark
+  const tx=64,ty=46,ts=54;
+  ctx.fillStyle=lgrad(ctx,tx,ty,tx+ts,ty+ts,'#4f8ef7','#8b5cf6');roundRect(ctx,tx,ty,ts,ts,14);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='700 30px "DM Sans"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('U',tx+ts/2,ty+ts/2+1);
+  ctx.textAlign='left';
+  ctx.fillStyle='#fff';ctx.font='600 23px "DM Sans"';ctx.fillText((d.company||'Ursa Mobile'),tx+ts+15,ty+ts/2-9);
+  ctx.fillStyle='#737aa0';ctx.font='500 13px "DM Mono"';ctx.fillText('B R A N D',tx+ts+15,ty+ts/2+12);
+
+  // name
+  ctx.textBaseline='top';
+  ctx.fillStyle='#ffffff';ctx.font='700 58px "DM Sans"';ctx.fillText(clip(ctx,d.name||'',W-180),64,116);
+
+  // value-prop lines parsed from the headline (split on | or ·)
+  const parts=(d.headline||'').split(/\s*[|·]\s*/).map(s=>s.trim()).filter(Boolean).slice(0,3);
+  ctx.font='400 25px "DM Sans"';
+  let y=194;
+  parts.forEach(p=>{
+    ctx.fillStyle='#8b5cf6';ctx.beginPath();ctx.arc(74,y+13,4.5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(226,230,240,0.92)';ctx.fillText(clip(ctx,p,W-300),96,y);
+    y+=39;
+  });
+
+  // url + gradient underline, bottom-right (safe from photo overlap)
+  ctx.textAlign='right';ctx.textBaseline='alphabetic';
+  ctx.fillStyle='rgba(255,255,255,0.78)';ctx.font='500 22px "DM Mono"';ctx.fillText('ursamobile.com',W-56,H-44);
+  ctx.strokeStyle=lgrad(ctx,W-250,0,W-56,0,'#4f8ef7','#8b5cf6');ctx.lineWidth=3;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(W-250,H-32);ctx.lineTo(W-56,H-32);ctx.stroke();
 }
 </script>
 </body>
