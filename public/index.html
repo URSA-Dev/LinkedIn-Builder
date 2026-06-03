@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ursa Mobile · LinkedIn Profile Builder</title>
+<link rel="icon" href="/ursa-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -19,8 +20,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .wrap{max-width:880px;margin:0 auto;padding:32px 20px}
 .header{text-align:center;margin-bottom:36px}
 .logo{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.logo-img{height:30px;filter:invert(1);display:block}
 .logo-dot{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:16px}
-.logo-text{font-size:14px;color:var(--muted);font-family:var(--mono)}
+.logo-text{font-size:13px;color:var(--muted);font-family:var(--mono)}
 .header h1{font-size:30px;font-weight:600;letter-spacing:-.03em;margin-bottom:6px}
 .header h1 span{background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
 .header p{font-size:14px;color:var(--muted)}
@@ -151,9 +153,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 <body>
 <div class="wrap">
   <div class="header">
-    <div class="logo"><div class="logo-dot">U</div><div class="logo-text">Ursa Mobile · Brand Tools</div></div>
+    <div class="logo"><img src="/ursa-logo.png" alt="Ursa Mobile" class="logo-img"><div class="logo-text">· Brand Tools</div></div>
     <h1>Resume → <span>LinkedIn</span> Profile</h1>
-    <p>Upload your resume · AI reads it · Get a copy-paste ready LinkedIn profile</p>
+    <p>Build a brand-aligned LinkedIn profile for Ursa Mobile employees — upload a resume, AI does the rest</p>
   </div>
 
   <div class="steps">
@@ -677,6 +679,29 @@ function copySkills(btn){
 }
 
 /* ===== Ursa LinkedIn banner generator (1584×396) ===== */
+// Preload the real Ursa logo and build white-recoloured versions (full lockup +
+// cropped bear) so the banner is on-brand and stays downloadable (same-origin).
+const LOGO={};
+const logoReady=new Promise(resolve=>{
+  const img=new Image();
+  img.onload=()=>{
+    const w=img.naturalWidth,h=img.naturalHeight;
+    LOGO.full=whiteCanvas(img,0,0,w,h);
+    LOGO.bear=whiteCanvas(img,0,0,Math.round(w*0.40),h); // bear occupies the left ~40%
+    resolve(true);
+    if(generatedProfile) renderBanners();
+  };
+  img.onerror=()=>resolve(false);
+  img.src='/ursa-logo.png';
+});
+function whiteCanvas(img,sx,sy,sw,sh){
+  const c=document.createElement('canvas');c.width=sw;c.height=sh;
+  const x=c.getContext('2d');
+  x.drawImage(img,sx,sy,sw,sh,0,0,sw,sh);
+  x.globalCompositeOperation='source-in';
+  x.fillStyle='#ffffff';x.fillRect(0,0,sw,sh);
+  return c;
+}
 function bannerData(){
   const p=generatedProfile||{};
   return {
@@ -689,6 +714,7 @@ async function renderBanners(){
   const grid=document.getElementById('bannerGrid');
   if(!grid) return;
   if(document.fonts&&document.fonts.ready){try{await document.fonts.ready;}catch(e){}}
+  try{await logoReady;}catch(e){}
   const d=bannerData();
   // Single Ursa banner — shown as the mock cover and offered for download.
   const mb=document.getElementById('mockBanner');
@@ -711,49 +737,51 @@ function lgrad(ctx,x0,y0,x1,y1,a,b){const g=ctx.createLinearGradient(x0,y0,x1,y1
 function clip(ctx,t,maxW){t=t||'';if(ctx.measureText(t).width<=maxW)return t;while(t.length>1&&ctx.measureText(t+'…').width>maxW)t=t.slice(0,-1);return t+'…';}
 function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
 
-// Ursa Mobile signature LinkedIn banner (1584×396). Premium dark composition;
-// keeps key text in the safe zone above LinkedIn's bottom-left profile-photo overlap.
+// Ursa Mobile signature LinkedIn banner (1584×396). On-brand: monochrome,
+// authoritative (defense / national-security identity), real logo + bear motif.
+// Key text stays in the safe zone above LinkedIn's bottom-left photo overlap.
 function drawBanner(ctx,W,H,d){
-  // base
-  ctx.fillStyle='#0b0d12';ctx.fillRect(0,0,W,H);
-  // right-side brand glow
-  const g=ctx.createRadialGradient(W*0.80,H*0.46,30,W*0.80,H*0.46,W*0.62);
-  g.addColorStop(0,'rgba(139,92,246,0.55)');
-  g.addColorStop(0.45,'rgba(79,142,247,0.20)');
-  g.addColorStop(1,'rgba(11,13,18,0)');
-  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-  // left brand accent edge
-  ctx.fillStyle=lgrad(ctx,0,0,0,H,'#4f8ef7','#8b5cf6');ctx.fillRect(0,0,8,H);
-  // oversized translucent "U" monogram
-  ctx.save();ctx.globalAlpha=0.10;ctx.fillStyle='#ffffff';ctx.font='800 540px "DM Sans"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('U',W*0.83,H/2+40);ctx.restore();
+  // deep charcoal base with a subtle diagonal gradient
+  const bg=ctx.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#15171d');bg.addColorStop(0.55,'#0d0f14');bg.addColorStop(1,'#07080b');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  // faint hairline frame
+  ctx.strokeStyle='rgba(255,255,255,0.09)';ctx.lineWidth=2;ctx.strokeRect(26,26,W-52,H-52);
 
-  // brand lockup: gradient logo tile + wordmark
-  const tx=64,ty=46,ts=54;
-  ctx.fillStyle=lgrad(ctx,tx,ty,tx+ts,ty+ts,'#4f8ef7','#8b5cf6');roundRect(ctx,tx,ty,ts,ts,14);ctx.fill();
-  ctx.fillStyle='#fff';ctx.font='700 30px "DM Sans"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('U',tx+ts/2,ty+ts/2+1);
-  ctx.textAlign='left';
-  ctx.fillStyle='#fff';ctx.font='600 23px "DM Sans"';ctx.fillText((d.company||'Ursa Mobile'),tx+ts+15,ty+ts/2-9);
-  ctx.fillStyle='#737aa0';ctx.font='500 13px "DM Mono"';ctx.fillText('B R A N D',tx+ts+15,ty+ts/2+12);
+  // oversized geometric bear watermark, right side
+  if(LOGO.bear){
+    const s=(H*0.96)/LOGO.bear.height, dw=LOGO.bear.width*s, dh=LOGO.bear.height*s;
+    ctx.save();ctx.globalAlpha=0.08;ctx.drawImage(LOGO.bear,W-dw-40,(H-dh)/2,dw,dh);ctx.restore();
+  }
 
-  // name
-  ctx.textBaseline='top';
-  ctx.fillStyle='#ffffff';ctx.font='700 58px "DM Sans"';ctx.fillText(clip(ctx,d.name||'',W-180),64,116);
+  // brand lockup (real white logo), top-left
+  if(LOGO.full){
+    const lh=38, lw=LOGO.full.width*(lh/LOGO.full.height);
+    ctx.drawImage(LOGO.full,62,50,lw,lh);
+  }
+  // corporate descriptor
+  ctx.textAlign='left';ctx.textBaseline='top';
+  ctx.fillStyle='rgba(255,255,255,0.45)';ctx.font='500 13px "DM Mono"';
+  ctx.fillText('ADVANCED NATIONAL SECURITY SOLUTIONS',64,100);
+
+  // employee name
+  ctx.fillStyle='#ffffff';ctx.font='700 54px "DM Sans"';
+  ctx.fillText(clip(ctx,d.name||'',W-200),64,142);
 
   // value-prop lines parsed from the headline (split on | or ·)
   const parts=(d.headline||'').split(/\s*[|·]\s*/).map(s=>s.trim()).filter(Boolean).slice(0,3);
-  ctx.font='400 25px "DM Sans"';
-  let y=194;
+  ctx.font='400 23px "DM Sans"';
+  let y=212;
   parts.forEach(p=>{
-    ctx.fillStyle='#8b5cf6';ctx.beginPath();ctx.arc(74,y+13,4.5,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='rgba(226,230,240,0.92)';ctx.fillText(clip(ctx,p,W-300),96,y);
-    y+=39;
+    ctx.fillStyle='rgba(255,255,255,0.4)';ctx.fillText('—',64,y);
+    ctx.fillStyle='rgba(226,230,240,0.9)';ctx.fillText(clip(ctx,p,W-360),100,y);
+    y+=35;
   });
 
-  // url + gradient underline, bottom-right (safe from photo overlap)
+  // url, bottom-right (safe from photo overlap)
   ctx.textAlign='right';ctx.textBaseline='alphabetic';
-  ctx.fillStyle='rgba(255,255,255,0.78)';ctx.font='500 22px "DM Mono"';ctx.fillText('ursamobile.com',W-56,H-44);
-  ctx.strokeStyle=lgrad(ctx,W-250,0,W-56,0,'#4f8ef7','#8b5cf6');ctx.lineWidth=3;ctx.lineCap='round';
-  ctx.beginPath();ctx.moveTo(W-250,H-32);ctx.lineTo(W-56,H-32);ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,0.7)';ctx.font='500 21px "DM Mono"';
+  ctx.fillText('ursamobile.com',W-58,H-46);
 }
 </script>
 </body>
