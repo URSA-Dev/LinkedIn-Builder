@@ -1,45 +1,44 @@
-export const config = { runtime: 'edge' };
-
-export default async function handler(req) {
-  // Same-origin only: the frontend is served from this same Vercel deployment,
-  // so no cross-origin CORS headers are emitted. This prevents other sites from
-  // using this credentialed (API-key-bearing) proxy.
+// Node.js serverless function (Vercel). Reliably exposes process.env at runtime.
+// Same-origin only: the frontend is served from this same deployment, so no
+// cross-origin CORS headers are emitted. This keeps the credentialed
+// (API-key-bearing) proxy from being usable by other sites.
+export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204 });
+    res.status(204).end();
+    return;
   }
 
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    res.status(405).json({ error: 'Method not allowed' });
+    return;
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    return new Response(JSON.stringify({ error: 'API key not configured' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    res.status(500).json({ error: 'API key not configured' });
+    return;
   }
 
-  let body;
-  try {
-    body = await req.json();
-  } catch {
-    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+  // Vercel auto-parses JSON bodies, but fall back to manual parsing just in case.
+  let body = req.body;
+  if (typeof body === 'string') {
+    try {
+      body = JSON.parse(body);
+    } catch {
+      res.status(400).json({ error: 'Invalid JSON body' });
+      return;
+    }
+  }
+  if (!body || typeof body !== 'object') {
+    res.status(400).json({ error: 'Invalid JSON body' });
+    return;
   }
 
   const { prompt, company, mission, keywords, tone } = body;
 
   if (!prompt || prompt.length < 50) {
-    return new Response(JSON.stringify({ error: 'Resume content too short' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    res.status(400).json({ error: 'Resume content too short' });
+    return;
   }
 
   const systemPrompt = `You are a world-class LinkedIn profile writer and personal branding expert for ${company || 'a startup'}. Your job is to read resumes and produce highly optimized, brand-aligned LinkedIn profiles. Always return valid JSON only — no markdown, no backticks, no preamble.`;
@@ -92,27 +91,19 @@ Return ONLY the JSON object.`;
 
     if (!anthropicRes.ok) {
       const err = await anthropicRes.text();
-      return new Response(JSON.stringify({ error: 'Anthropic API error', detail: err }), {
-        status: 502,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      res.status(502).json({ error: 'Anthropic API error', detail: err });
+      return;
     }
 
     const data = await anthropicRes.json();
     const raw = data.content?.find(b => b.type === 'text')?.text || '{}';
     const clean = raw.replace(/```json|```/g, '').trim();
 
-    // Validate it's parseable JSON before returning
-    JSON.parse(clean);
+    // Validate it's parseable JSON before returning.
+    const parsed = JSON.parse(clean);
 
-    return new Response(clean, {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    res.status(200).json(parsed);
   } catch (e) {
-    return new Response(JSON.stringify({ error: 'Generation failed', detail: e.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    res.status(500).json({ error: 'Generation failed', detail: e.message });
   }
 }
