@@ -127,8 +127,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .li-sk2{background:#eef3f8;color:#0a66c2;border-radius:16px;padding:4px 12px;font-size:12px;font-weight:500}
 .li-card .tweak-inline input{background:#fff;border-color:#d7dbe0;color:#1d2226}
 /* Banner generator */
-.banner-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
-@media(max-width:768px){.banner-grid{grid-template-columns:1fr}}
+.banner-grid{margin-top:10px}
 .banner-item{border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg)}
 .banner-item canvas{display:block;width:100%;height:auto}
 .banner-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;font-size:11px;color:var(--muted)}
@@ -266,8 +265,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
     <!-- Ursa LinkedIn banners -->
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:4px">
-        <div style="font-size:14px;font-weight:600">🎨 Ursa LinkedIn banners</div>
-        <div style="font-size:11px;color:var(--muted)">1584×396 · download, then set as your LinkedIn cover photo</div>
+        <div style="font-size:14px;font-weight:600">🎨 Ursa LinkedIn banner</div>
+        <div style="font-size:11px;color:var(--muted)">Download, then set as your LinkedIn cover photo</div>
       </div>
       <div id="bannerGrid" class="banner-grid"></div>
     </div>
@@ -691,21 +690,18 @@ async function renderBanners(){
   if(!grid) return;
   if(document.fonts&&document.fonts.ready){try{await document.fonts.ready;}catch(e){}}
   const d=bannerData();
-  // Mock banner uses style 1.
+  // Single Ursa banner — shown as the mock cover and offered for download.
   const mb=document.getElementById('mockBanner');
-  if(mb){mb.textContent='';const mc=mkCanvas();drawBannerA(mc.getContext('2d'),1584,396,d);mb.appendChild(mc);}
-  const styles=[drawBannerA,drawBannerB,drawBannerC];
+  if(mb){mb.textContent='';const mc=mkCanvas();drawBanner(mc.getContext('2d'),1584,396,d);mb.appendChild(mc);}
   grid.textContent='';
-  styles.forEach((fn,i)=>{
-    const item=document.createElement('div');item.className='banner-item';
-    const c=mkCanvas();fn(c.getContext('2d'),1584,396,d);
-    const row=document.createElement('div');row.className='banner-row';
-    const lbl=document.createElement('span');lbl.textContent='Style '+(i+1);
-    const btn=document.createElement('button');btn.className='btn btn-outline btn-sm';btn.textContent='⬇ Download';
-    btn.onclick=()=>downloadCanvas(c,'ursa-linkedin-banner-'+(i+1)+'.png');
-    row.appendChild(lbl);row.appendChild(btn);
-    item.appendChild(c);item.appendChild(row);grid.appendChild(item);
-  });
+  const item=document.createElement('div');item.className='banner-item';
+  const c=mkCanvas();drawBanner(c.getContext('2d'),1584,396,d);
+  const row=document.createElement('div');row.className='banner-row';
+  const lbl=document.createElement('span');lbl.textContent='Ursa banner · 1584×396 (LinkedIn cover size)';
+  const btn=document.createElement('button');btn.className='btn btn-green btn-sm';btn.textContent='⬇ Download banner';
+  btn.onclick=()=>downloadCanvas(c,'ursa-linkedin-banner.png');
+  row.appendChild(lbl);row.appendChild(btn);
+  item.appendChild(c);item.appendChild(row);grid.appendChild(item);
 }
 function mkCanvas(){const c=document.createElement('canvas');c.width=1584;c.height=396;return c;}
 function downloadCanvas(c,name){
@@ -715,7 +711,7 @@ function lgrad(ctx,x0,y0,x1,y1,a,b){const g=ctx.createLinearGradient(x0,y0,x1,y1
 function clip(ctx,t,maxW){t=t||'';if(ctx.measureText(t).width<=maxW)return t;while(t.length>1&&ctx.measureText(t+'…').width>maxW)t=t.slice(0,-1);return t+'…';}
 function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
 
-function drawBannerA(ctx,W,H,d){
+function drawBanner(ctx,W,H,d){
   ctx.fillStyle=lgrad(ctx,0,0,W,H,'#4f8ef7','#8b5cf6');ctx.fillRect(0,0,W,H);
   ctx.save();ctx.globalAlpha=.13;ctx.fillStyle='#fff';ctx.font='800 470px "DM Sans"';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText('U',W-20,H/2+30);ctx.restore();
   ctx.textAlign='left';ctx.textBaseline='top';
@@ -723,29 +719,6 @@ function drawBannerA(ctx,W,H,d){
   ctx.fillStyle='#fff';ctx.font='700 78px "DM Sans"';ctx.fillText(clip(ctx,d.name,W-520),68,150);
   ctx.fillStyle='rgba(255,255,255,.92)';ctx.font='400 32px "DM Sans"';ctx.fillText(clip(ctx,d.headline,W-520),70,250);
   ctx.fillStyle='rgba(255,255,255,.72)';ctx.font='500 22px "DM Mono"';ctx.fillText('ursamobile.com',70,H-52);
-}
-function drawBannerB(ctx,W,H,d){
-  ctx.fillStyle='#0d0f12';ctx.fillRect(0,0,W,H);
-  ctx.fillStyle=lgrad(ctx,0,0,0,H,'#4f8ef7','#8b5cf6');ctx.fillRect(0,0,16,H);
-  ctx.fillStyle=lgrad(ctx,70,56,134,120,'#4f8ef7','#8b5cf6');roundRect(ctx,70,56,64,64,15);ctx.fill();
-  ctx.fillStyle='#fff';ctx.font='700 36px "DM Sans"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('U',102,90);
-  ctx.textAlign='left';ctx.textBaseline='top';
-  ctx.fillStyle='#5a6280';ctx.font='500 24px "DM Mono"';ctx.fillText((d.company||'Ursa Mobile')+' · Brand',150,74);
-  ctx.fillStyle='#e2e6f0';ctx.font='700 74px "DM Sans"';ctx.fillText(clip(ctx,d.name,W-140),70,168);
-  ctx.fillStyle='#93c5fd';ctx.font='400 30px "DM Sans"';ctx.fillText(clip(ctx,d.headline,W-140),72,262);
-  ctx.fillStyle='#5a6280';ctx.font='500 22px "DM Mono"';ctx.fillText('ursamobile.com',72,H-50);
-}
-function drawBannerC(ctx,W,H,d){
-  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
-  const PW=560;
-  ctx.fillStyle=lgrad(ctx,0,0,PW,H,'#4f8ef7','#8b5cf6');ctx.fillRect(0,0,PW,H);
-  ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.font='800 156px "DM Sans"';ctx.fillText('U',PW/2,H/2-22);
-  ctx.font='500 26px "DM Mono"';ctx.fillText((d.company||'Ursa Mobile').toUpperCase(),PW/2,H/2+92);
-  ctx.textAlign='left';ctx.textBaseline='top';
-  ctx.fillStyle='#1d2226';ctx.font='700 66px "DM Sans"';ctx.fillText(clip(ctx,d.name,W-PW-90),PW+58,H/2-92);
-  ctx.fillStyle='#0a66c2';ctx.font='400 30px "DM Sans"';ctx.fillText(clip(ctx,d.headline,W-PW-90),PW+60,H/2+6);
-  ctx.fillStyle='#5e6670';ctx.font='500 22px "DM Mono"';ctx.fillText('ursamobile.com',PW+60,H-58);
 }
 </script>
 </body>
