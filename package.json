@@ -1,0 +1,13 @@
+{
+  "name": "ursa-linkedin-profiles",
+  "version": "1.0.0",
+  "description": "Internal LinkedIn profile generator for Ursa Mobile employees",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

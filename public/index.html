@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ursa Mobile · LinkedIn Profile Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0f12;--surf:#161921;--card:#1c2030;--border:#252a38;
+  --text:#e2e6f0;--muted:#5a6280;--accent:#4f8ef7;--purple:#8b5cf6;
+  --green:#22c55e;--amber:#f59e0b;--red:#ef4444;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh}
+.wrap{max-width:880px;margin:0 auto;padding:32px 20px}
+.header{text-align:center;margin-bottom:36px}
+.logo{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.logo-dot{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:16px}
+.logo-text{font-size:14px;color:var(--muted);font-family:var(--mono)}
+.header h1{font-size:30px;font-weight:600;letter-spacing:-.03em;margin-bottom:6px}
+.header h1 span{background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.header p{font-size:14px;color:var(--muted)}
+.steps{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:32px}
+.step-node{display:flex;align-items:center;gap:8px}
+.step-circle{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--muted);transition:.3s}
+.step-circle.active{border-color:var(--accent);color:var(--accent);background:rgba(79,142,247,.1)}
+.step-circle.done{border-color:var(--green);color:var(--green);background:rgba(34,197,94,.1)}
+.step-label{font-size:12px;color:var(--muted)}
+.step-label.active{color:var(--text)}
+.step-line{width:40px;height:1px;background:var(--border);margin:0 8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+.drop-zone{border:1.5px dashed var(--border);border-radius:10px;padding:48px 24px;text-align:center;cursor:pointer;transition:.2s;position:relative}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--accent);background:rgba(79,142,247,.04)}
+.drop-zone.has-file{border-color:var(--green);background:rgba(34,197,94,.04)}
+.drop-icon{font-size:36px;margin-bottom:12px;display:block}
+.drop-title{font-size:15px;font-weight:500;margin-bottom:4px}
+.drop-sub{font-size:13px;color:var(--muted)}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.file-chip{display:inline-flex;align-items:center;gap:8px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--green);margin-top:12px}
+.paste-toggle{text-align:center;font-size:12px;color:var(--muted);margin-top:14px;cursor:pointer}
+.paste-toggle:hover{color:var(--accent)}
+.paste-area{display:none;margin-top:14px}
+.paste-area.on{display:block}
+.brand-strip{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.fg label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px}
+.fg input,.fg textarea,.fg select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-family:var(--font);font-size:13px;transition:.15s}
+.fg input:focus,.fg textarea:focus,.fg select:focus{outline:none;border-color:var(--accent)}
+.fg textarea{resize:vertical;line-height:1.5;font-family:var(--font)}
+.fg{margin-bottom:14px}
+.tone-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.tone-chip{padding:5px 14px;border-radius:20px;border:1px solid var(--border);font-size:12px;cursor:pointer;color:var(--muted);background:transparent;transition:.15s}
+.tone-chip:hover{border-color:var(--accent);color:var(--text)}
+.tone-chip.on{border-color:var(--accent);color:var(--accent);background:rgba(79,142,247,.1)}
+.btn{padding:10px 22px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;border:none;font-family:var(--font);transition:.15s;display:inline-flex;align-items:center;gap:8px}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{filter:brightness(1.1)}
+.btn-accent:disabled{opacity:.4;cursor:not-allowed}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-green{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+.btn-green:hover{background:rgba(34,197,94,.2)}
+.btn-sm{padding:6px 14px;font-size:12px}
+.output-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:768px){.output-grid{grid-template-columns:1fr}.brand-strip{grid-template-columns:1fr}}
+.section-block{margin-bottom:20px}
+.section-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.section-content{font-size:13px;line-height:1.7;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;white-space:pre-wrap;position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--muted);cursor:pointer;font-family:var(--font);transition:.15s}
+.copy-btn:hover{color:var(--text);border-color:var(--accent)}
+.pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;margin:2px}
+.skill-pill{background:rgba(79,142,247,.1);color:#93c5fd;border:1px solid rgba(79,142,247,.2)}
+.li-preview{background:#1B1F23;border-radius:12px;overflow:hidden;border:1px solid #2d3748}
+.li-banner{height:72px;background:linear-gradient(135deg,#0a66c2,#1d8bc4)}
+.li-hdr{padding:0 18px 16px;position:relative}
+.li-av{width:60px;height:60px;border-radius:50%;background:rgba(79,142,247,.2);border:3px solid #1B1F23;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#93c5fd;margin-top:-30px;margin-bottom:8px}
+.li-name{font-size:16px;font-weight:700;color:#f0f2f5}
+.li-hl{font-size:13px;color:#a0aec0;margin:3px 0 6px}
+.li-meta{font-size:12px;color:#718096}
+.li-sec{padding:12px 18px;border-top:1px solid #2d3748}
+.li-sec-title{font-size:13px;font-weight:700;color:#f0f2f5;margin-bottom:8px}
+.li-body{font-size:12px;color:#a0aec0;line-height:1.65;white-space:pre-wrap}
+.li-skills{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.li-sk{background:#2d3748;color:#90cdf4;border-radius:20px;padding:3px 10px;font-size:11px}
+.spinner{width:16px;height:16px;border:2px solid rgba(79,142,247,.3);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:-3px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.progress-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:12px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--purple));border-radius:2px;transition:width .4s ease}
+.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px}
+.alert-info{background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.2);color:#93c5fd}
+.copy-all-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.footer{text-align:center;font-size:11px;color:var(--muted);margin-top:40px;padding-top:20px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="logo"><div class="logo-dot">U</div><div class="logo-text">Ursa Mobile · Brand Tools</div></div>
+    <h1>Resume → <span>LinkedIn</span> Profile</h1>
+    <p>Upload your resume · AI reads it · Get a copy-paste ready LinkedIn profile</p>
+  </div>
+
+  <div class="steps">
+    <div class="step-node"><div class="step-circle active" id="sc1">1</div><div class="step-label active" id="sl1">Upload</div></div>
+    <div class="step-line"></div>
+    <div class="step-node"><div class="step-circle" id="sc2">2</div><div class="step-label" id="sl2">Brand</div></div>
+    <div class="step-line"></div>
+    <div class="step-node"><div class="step-circle" id="sc3">3</div><div class="step-label" id="sl3">Generate</div></div>
+    <div class="step-line"></div>
+    <div class="step-node"><div class="step-circle" id="sc4">4</div><div class="step-label" id="sl4">Copy</div></div>
+  </div>
+
+  <div id="step1">
+    <div class="card">
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt">
+        <span class="drop-icon">📄</span>
+        <div class="drop-title">Drop your resume here</div>
+        <div class="drop-sub">PDF, Word (.doc/.docx), or plain text · or click to browse</div>
+        <div id="fileChip" style="display:none" class="file-chip"><span>✓</span><span id="fileName"></span></div>
+      </div>
+      <div class="paste-toggle" onclick="togglePaste()">— or paste resume text directly —</div>
+      <div class="paste-area" id="pasteArea">
+        <textarea id="pasteInput" rows="6" placeholder="Paste your resume text here..." style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:10px;color:var(--text);font-family:var(--font);font-size:13px"></textarea>
+        <button class="btn btn-outline btn-sm" style="margin-top:8px" onclick="usePastedText()">Use this text</button>
+      </div>
+      <div class="progress-bar" id="readProgress" style="display:none"><div class="progress-fill" id="readFill" style="width:0%"></div></div>
+      <div style="font-size:13px;color:var(--muted);text-align:center;margin-top:8px" id="readStatus"></div>
+    </div>
+    <button class="btn btn-accent" id="step1next" style="display:none;width:100%;justify-content:center" onclick="goStep(2)">Continue →</button>
+  </div>
+
+  <div id="step2" style="display:none">
+    <div class="card">
+      <div style="font-size:14px;font-weight:500;margin-bottom:16px;color:var(--muted)">Brand & tone settings</div>
+      <div class="brand-strip">
+        <div class="fg"><label>Company name</label><input id="b-company" value="Ursa Mobile"></div>
+        <div class="fg"><label>Mission / tagline</label><input id="b-mission" placeholder="What your company does"></div>
+      </div>
+      <div class="fg"><label>SEO keywords (comma-separated)</label><input id="b-kw" placeholder="enterprise mobility, SaaS, digital transformation, B2B"></div>
+      <div class="fg"><label>Voice / tone</label>
+        <div class="tone-row" id="toneRow">
+          <div class="tone-chip on" data-tone="Professional & authoritative">Professional</div>
+          <div class="tone-chip" data-tone="Warm & approachable">Warm</div>
+          <div class="tone-chip" data-tone="Bold & results-driven">Bold</div>
+          <div class="tone-chip" data-tone="Technical & precise">Technical</div>
+          <div class="tone-chip" data-tone="Creative & innovative">Creative</div>
+          <div class="tone-chip" data-tone="Leadership & strategic">Leadership</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-outline" onclick="goStep(1)">← Back</button>
+      <button class="btn btn-accent" style="flex:1;justify-content:center" onclick="goStep(3);runGeneration()">Generate LinkedIn profile ✨</button>
+    </div>
+  </div>
+
+  <div id="step3" style="display:none">
+    <div class="card" style="text-align:center;padding:48px 24px">
+      <div style="font-size:32px;margin-bottom:16px">⚡</div>
+      <div style="font-size:16px;font-weight:500;margin-bottom:6px" id="genTitle">Reading your resume…</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px" id="genSub">Extracting experience and achievements</div>
+      <div class="progress-bar"><div class="progress-fill" id="genFill" style="width:5%"></div></div>
+    </div>
+  </div>
+
+  <div id="step4" style="display:none">
+    <div class="alert alert-info" id="scoreAlert"></div>
+    <div class="output-grid">
+      <div>
+        <div class="section-block">
+          <div class="section-label">📌 Headline <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;font-size:11px">(paste into LinkedIn headline)</span></div>
+          <div class="section-content" id="out-headline"><button class="copy-btn" onclick="cp('out-headline',this)">Copy</button></div>
+        </div>
+        <div class="section-block">
+          <div class="section-label">📝 About <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;font-size:11px">(paste into About section)</span></div>
+          <div class="section-content" id="out-about" style="max-height:220px;overflow-y:auto"><button class="copy-btn" onclick="cp('out-about',this)">Copy</button></div>
+        </div>
+        <div class="section-block">
+          <div class="section-label">💼 Experience bullets</div>
+          <div id="out-bullets" class="section-content"><button class="copy-btn" onclick="cp('out-bullets',this)">Copy</button></div>
+        </div>
+        <div class="section-block">
+          <div class="section-label">🔗 Connection note</div>
+          <div class="section-content" id="out-connect"><button class="copy-btn" onclick="cp('out-connect',this)">Copy</button></div>
+        </div>
+        <div class="section-block">
+          <div class="section-label">💡 Alt headline</div>
+          <div class="section-content" id="out-alt"><button class="copy-btn" onclick="cp('out-alt',this)">Copy</button></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-family:var(--mono)">LinkedIn preview</div>
+        <div class="li-preview">
+          <div class="li-banner"></div>
+          <div class="li-hdr">
+            <div class="li-av" id="prev-av"></div>
+            <div class="li-name" id="prev-name"></div>
+            <div class="li-hl" id="prev-hl"></div>
+            <div class="li-meta" id="prev-meta"></div>
+          </div>
+          <div class="li-sec"><div class="li-sec-title">About</div><div class="li-body" id="prev-about" style="max-height:120px;overflow:hidden;mask-image:linear-gradient(to bottom,black 70%,transparent)"></div></div>
+          <div class="li-sec"><div class="li-sec-title">Skills</div><div class="li-skills" id="prev-skills"></div></div>
+        </div>
+        <div style="margin-top:16px">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-family:var(--mono)">Skills to add</div>
+          <div id="out-skills"></div>
+        </div>
+      </div>
+    </div>
+    <div class="copy-all-row">
+      <button class="btn btn-green" onclick="copyAll()">📋 Copy complete profile</button>
+      <button class="btn btn-outline btn-sm" onclick="goStep(1);resetAll()">New resume</button>
+      <button class="btn btn-outline btn-sm" onclick="goStep(2)">Adjust brand</button>
+    </div>
+  </div>
+
+  <div class="footer">Ursa Mobile · Internal brand tool · Powered by Claude</div>
+</div>
+
+<script>
+let resumeContent='';
+let selectedTone='Professional & authoritative';
+let generatedProfile=null;
+
+document.querySelectorAll('.tone-chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{
+    document.querySelectorAll('.tone-chip').forEach(c=>c.classList.remove('on'));
+    chip.classList.add('on');
+    selectedTone=chip.dataset.tone;
+  });
+});
+
+function goStep(n){
+  [1,2,3,4].forEach(i=>{
+    document.getElementById('step'+i).style.display=i===n?'':'none';
+    const sc=document.getElementById('sc'+i);
+    const sl=document.getElementById('sl'+i);
+    sc.className='step-circle'+(i<n?' done':i===n?' active':'');
+    sl.className='step-label'+(i===n?' active':'');
+    sc.textContent=i<n?'✓':i;
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function togglePaste(){
+  document.getElementById('pasteArea').classList.toggle('on');
+}
+
+function usePastedText(){
+  const txt=document.getElementById('pasteInput').value.trim();
+  if(txt.length<50){alert('Please paste a longer resume text');return;}
+  resumeContent=txt;
+  document.getElementById('fileName').textContent='Pasted text ('+txt.length+' chars)';
+  document.getElementById('fileChip').style.display='inline-flex';
+  document.getElementById('dropZone').classList.add('has-file');
+  document.getElementById('step1next').style.display='inline-flex';
+}
+
+const dz=document.getElementById('dropZone');
+const fileInput=document.getElementById('fileInput');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0])});
+fileInput.addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0])});
+
+async function handleFile(file){
+  document.getElementById('fileName').textContent=file.name;
+  document.getElementById('fileChip').style.display='inline-flex';
+  dz.classList.add('has-file');
+  const prog=document.getElementById('readProgress');
+  const fill=document.getElementById('readFill');
+  const status=document.getElementById('readStatus');
+  prog.style.display='block';
+  fill.style.width='20%';
+  status.textContent='Reading file…';
+  try{
+    if(file.name.toLowerCase().endsWith('.pdf')){
+      resumeContent=await readPDFAsText(file);
+    } else {
+      resumeContent=await readAsText(file);
+    }
+    fill.style.width='100%';
+    status.textContent='✓ Extracted '+resumeContent.length.toLocaleString()+' characters';
+    document.getElementById('step1next').style.display='inline-flex';
+  } catch(e){
+    status.textContent='Could not read file — try .txt or .docx';
+    fill.style.background='var(--red)';
+  }
+}
+
+function readAsText(file){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=e=>res(e.target.result);
+    r.onerror=()=>rej(new Error('Read failed'));
+    r.readAsText(file);
+  });
+}
+
+async function readPDFAsText(file){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=async e=>{
+      const bytes=new Uint8Array(e.target.result);
+      const decoder=new TextDecoder('utf-8',{fatal:false});
+      const txt=decoder.decode(bytes);
+      const streams=txt.match(/stream[\s\S]*?endstream/g)||[];
+      let extracted='';
+      for(const s of streams){
+        const readable=s.replace(/[^\x20-\x7E\n\r\t]/g,' ').replace(/\s+/g,' ');
+        if(readable.length>50) extracted+=readable+'\n';
+      }
+      const bt=txt.match(/\(([^)]{2,200})\)/g)||[];
+      const btText=bt.map(m=>m.slice(1,-1)).join(' ');
+      const combined=(extracted+'\n'+btText).slice(0,8000);
+      if(combined.trim().length>200) res(combined);
+      else res(txt.replace(/[^\x20-\x7E\n\r\t]/g,' ').replace(/\s{3,}/g,'\n').slice(0,8000));
+    };
+    r.onerror=()=>rej(new Error('PDF read failed'));
+    r.readAsArrayBuffer(file);
+  });
+}
+
+async function runGeneration(){
+  const company=document.getElementById('b-company').value.trim()||'Ursa Mobile';
+  const mission=document.getElementById('b-mission').value.trim();
+  const kw=document.getElementById('b-kw').value.trim();
+
+  const steps=[
+    ['Reading your resume…','Extracting experience and achievements',15],
+    ['Analyzing accomplishments…','Finding quantifiable wins',35],
+    ['Crafting your headline…','SEO-optimized headline',55],
+    ['Writing About section…','Building your narrative',75],
+    ['Generating bullets…','Power verbs + metrics',90],
+    ['Finalizing…','Skills and connection message',98]
+  ];
+
+  let si=0;
+  const fill=document.getElementById('genFill');
+  const title=document.getElementById('genTitle');
+  const sub=document.getElementById('genSub');
+
+  const ticker=setInterval(()=>{
+    if(si<steps.length){
+      title.textContent=steps[si][0];
+      sub.textContent=steps[si][1];
+      fill.style.width=steps[si][2]+'%';
+      si++;
+    }
+  },900);
+
+  try{
+    const res=await fetch('/api/generate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        prompt:resumeContent,
+        company,mission,keywords:kw,tone:selectedTone
+      })
+    });
+    clearInterval(ticker);
+    fill.style.width='100%';
+    if(!res.ok){
+      const err=await res.json().catch(()=>({}));
+      throw new Error(err.error||'Generation failed');
+    }
+    generatedProfile=await res.json();
+    setTimeout(()=>{goStep(4);renderOutput(generatedProfile);},400);
+  } catch(e){
+    clearInterval(ticker);
+    title.textContent='Generation failed';
+    sub.textContent=e.message||'Please try again';
+    fill.style.background='var(--red)';
+    setTimeout(()=>goStep(2),2500);
+  }
+}
+
+function initials(name){
+  return (name||'?').split(' ').filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');
+}
+
+function renderOutput(p){
+  const scoreColor=p.score>=75?'#22c55e':p.score>=50?'#f59e0b':'#ef4444';
+  document.getElementById('scoreAlert').innerHTML=`<strong style="color:${scoreColor}">Profile score: ${p.score||'—'}/100</strong> · ${p.score_rationale||''}`;
+
+  const setContent=(id,text)=>{
+    const el=document.getElementById(id);
+    const btn=el.querySelector('.copy-btn');
+    el.textContent=text||'';
+    el.appendChild(btn);
+  };
+
+  setContent('out-headline',p.headline||'');
+  setContent('out-about',p.about||'');
+  setContent('out-bullets',(p.experience_bullets||[]).map(b=>'• '+b).join('\n'));
+  setContent('out-connect',p.connection_note||'');
+  setContent('out-alt',p.headline_alt||'');
+
+  document.getElementById('out-skills').innerHTML=(p.skills_featured||[]).map(s=>`<span class="pill skill-pill">${s}</span>`).join('');
+
+  document.getElementById('prev-av').textContent=initials(p.name||'');
+  document.getElementById('prev-name').textContent=p.name||'';
+  document.getElementById('prev-hl').textContent=p.headline||'';
+  const companyN=document.getElementById('b-company').value;
+  document.getElementById('prev-meta').textContent=(p.location||'')+(companyN?' · '+companyN:'');
+  document.getElementById('prev-about').textContent=p.about||'';
+  document.getElementById('prev-skills').innerHTML=(p.skills_featured||[]).slice(0,8).map(s=>`<span class="li-sk">${s}</span>`).join('');
+}
+
+function cp(id,btn){
+  const el=document.getElementById(id);
+  const clone=el.cloneNode(true);
+  const cb=clone.querySelector('.copy-btn');
+  if(cb) cb.remove();
+  navigator.clipboard.writeText(clone.textContent.trim()).catch(()=>{});
+  btn.textContent='✓';
+  setTimeout(()=>btn.textContent='Copy',1500);
+}
+
+function copyAll(){
+  if(!generatedProfile) return;
+  const p=generatedProfile;
+  const t=[
+    `=== LinkedIn Profile: ${p.name} ===\n`,
+    `HEADLINE:\n${p.headline}\n`,
+    `ALT HEADLINE:\n${p.headline_alt}\n`,
+    `ABOUT:\n${p.about}\n`,
+    `BULLETS:\n${(p.experience_bullets||[]).map(b=>'• '+b).join('\n')}\n`,
+    `SKILLS:\n${(p.skills_featured||[]).join(', ')}\n`,
+    `CONNECTION:\n${p.connection_note}`
+  ].join('\n');
+  navigator.clipboard.writeText(t).catch(()=>{});
+}
+
+function resetAll(){
+  resumeContent='';
+  generatedProfile=null;
+  document.getElementById('fileChip').style.display='none';
+  document.getElementById('dropZone').classList.remove('has-file','drag');
+  document.getElementById('step1next').style.display='none';
+  document.getElementById('readProgress').style.display='none';
+  document.getElementById('readStatus').textContent='';
+  document.getElementById('fileInput').value='';
+  document.getElementById('pasteInput').value='';
+  document.getElementById('pasteArea').classList.remove('on');
+}
+</script>
+</body>
+</html>
