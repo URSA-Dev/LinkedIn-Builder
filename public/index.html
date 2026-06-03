@@ -687,14 +687,40 @@ const BANNER_SERIF="'Spectral', serif";
 const BANNER_MONO="'IBM Plex Mono', monospace";
 const BN_ACCENT='#8FA0B8';
 
-// Real low-poly URSA bear artwork (transparent wireframe) from the design bundle.
-let BEAR_IMG=null;
+// Use the REAL Ursa brand bear — cropped straight from the official logo so it
+// matches the brand exactly (the logo is the bear + "URSA MOBILE" wordmark).
+let BEAR_IMG=null, BEAR_CROP=null;
 const bearReady=new Promise(resolve=>{
   const img=new Image();
-  img.onload=()=>{BEAR_IMG=img;resolve(true);if(generatedProfile&&typeof renderBannerStudio==='function')renderBannerStudio();};
+  img.onload=()=>{
+    BEAR_IMG=img;
+    try{BEAR_CROP=bearCropFromLogo(img);}catch(e){BEAR_CROP={sx:0,sy:0,sw:img.naturalWidth,sh:img.naturalHeight};}
+    resolve(true);
+    if(generatedProfile&&typeof renderBannerStudio==='function')renderBannerStudio();
+  };
   img.onerror=()=>resolve(false);
-  img.src='/ursa-bear.png';
+  img.src='/ursa-logo.png';
 });
+// Find the bear's bounding box (left artwork, before the gap that precedes "URSA").
+function bearCropFromLogo(img){
+  const W=img.naturalWidth,H=img.naturalHeight;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const x=cv.getContext('2d');x.drawImage(img,0,0);
+  const data=x.getImageData(0,0,W,H).data;
+  const colHas=col=>{for(let y=0;y<H;y++){if(data[(y*W+col)*4+3]>24)return true;}return false;};
+  let start=0;while(start<W&&!colHas(start))start++;
+  let end=start,gap=0;
+  for(let col=start;col<W;col++){
+    if(colHas(col)){end=col;gap=0;} else {gap++;if(gap>=Math.round(W*0.04))break;}
+  }
+  // vertical bounds of that x-range
+  let top=0,bot=H-1;
+  const rowHas=row=>{for(let c2=start;c2<=end;c2++){if(data[(row*W+c2)*4+3]>24)return true;}return false;};
+  while(top<H&&!rowHas(top))top++;
+  while(bot>top&&!rowHas(bot))bot--;
+  const pad=6;
+  return {sx:Math.max(0,start-pad), sy:Math.max(0,top-pad), sw:Math.min(W,end-start+1+pad*2), sh:Math.min(H,bot-top+1+pad*2)};
+}
 
 function colorsFor(dark){
   return { dark,
@@ -712,20 +738,15 @@ function withA(ctx,a,fn){ctx.save();ctx.globalAlpha=a;fn();ctx.restore();}
 // Draw the real bear asset, contained in the slot. Dark theme uses the artwork
 // as-is (pale wireframe); light theme recolours it to ink (matches the design).
 function drawBear(ctx,bx,by,bw,bh,c,op){
-  if(!BEAR_IMG) return;
-  const iw=BEAR_IMG.naturalWidth, ih=BEAR_IMG.naturalHeight, s=Math.min(bw/iw,bh/ih);
-  const dw=iw*s, dh=ih*s, ox=bx+(bw-dw)/2, oy=by+(bh-dh)/2;
-  ctx.save();ctx.globalAlpha=op;
-  if(c.dark){
-    ctx.drawImage(BEAR_IMG,ox,oy,dw,dh);
-  } else {
-    const off=document.createElement('canvas');off.width=Math.max(1,Math.round(dw));off.height=Math.max(1,Math.round(dh));
-    const o=off.getContext('2d');
-    o.drawImage(BEAR_IMG,0,0,off.width,off.height);
-    o.globalCompositeOperation='source-in';o.fillStyle=c.ink;o.fillRect(0,0,off.width,off.height);
-    ctx.drawImage(off,ox,oy);
-  }
-  ctx.restore();
+  if(!BEAR_IMG||!BEAR_CROP) return;
+  const sw=BEAR_CROP.sw, sh=BEAR_CROP.sh, s=Math.min(bw/sw,bh/sh);
+  const dw=sw*s, dh=sh*s, ox=bx+(bw-dw)/2, oy=by+(bh-dh)/2;
+  // The brand logo bear is solid black — recolour it (steel on dark, ink on light).
+  const off=document.createElement('canvas');off.width=Math.max(1,Math.round(dw));off.height=Math.max(1,Math.round(dh));
+  const o=off.getContext('2d');
+  o.drawImage(BEAR_IMG,BEAR_CROP.sx,BEAR_CROP.sy,sw,sh,0,0,off.width,off.height);
+  o.globalCompositeOperation='source-in';o.fillStyle=c.dark?c.accent:c.ink;o.fillRect(0,0,off.width,off.height);
+  ctx.save();ctx.globalAlpha=op;ctx.drawImage(off,ox,oy);ctx.restore();
 }
 function bgFill(ctx,W,H,c){
   ctx.fillStyle=c.bg;ctx.fillRect(0,0,W,H);
