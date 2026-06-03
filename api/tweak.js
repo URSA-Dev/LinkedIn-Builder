@@ -1,6 +1,14 @@
 // Node.js serverless function (Vercel). Refines an existing LinkedIn profile via
 // chat: either EDITS the profile (returns only changed fields) or REPLIES with
 // advice. Same-origin only — no cross-origin CORS headers on this credentialed proxy.
+
+// Ursa Mobile brand rules + LinkedIn branding best practices — applied to every
+// edit and every piece of advice so employees stay on-brand and on-best-practice.
+const BRAND_RULES = `BRAND & BEST-PRACTICE RULES (always apply):
+Ursa Mobile is a national-security / defense solutions company — "Advanced National Security Solutions". This is an internal tool for Ursa Mobile employees. Keep a professional, authoritative, mission-driven, trustworthy voice; favor clarity, integrity and measurable impact over hype.
+National-security discretion: keep claims general and recruiter-safe; NEVER invent or imply classified programs, clearances, codenames, agencies, or specifics not in the profile.
+LinkedIn best practices: headline <=220 chars, keyword-front-loaded with · or | separators; About first-person with hook + impact story + call to action; experience bullets are power-verb-led with quantified outcomes (never fabricate numbers); skills are recruiter-searched and role-relevant; connection note <=280 chars, warm and specific. When giving advice, frame it as concrete, brand-aligned focus points.`;
+
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.status(204).end();
@@ -96,6 +104,8 @@ Rules:
 - For advice/questions: action="reply", "changes" is an empty object {}.
 - Never invent facts not supported by the existing profile; refine wording, structure, emphasis, and keywords.
 - "reply" is always present and human-friendly.
+
+${BRAND_RULES}
 
 Return ONLY the JSON object.`;
 

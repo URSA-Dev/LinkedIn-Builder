@@ -2,6 +2,22 @@
 // Same-origin only: the frontend is served from this same deployment, so no
 // cross-origin CORS headers are emitted. This keeps the credentialed
 // (API-key-bearing) proxy from being usable by other sites.
+
+// Ursa Mobile brand rules + LinkedIn branding best practices, applied to every
+// generation so employees are guided to the right focus points.
+const BRAND_RULES = `BRAND & BEST-PRACTICE RULES (always apply):
+Ursa Mobile is a national-security / defense solutions company — "Advanced National Security Solutions". This is an internal tool for Ursa Mobile employees. Write in a professional, authoritative, mission-driven and trustworthy voice. Favor clarity, integrity and measurable impact over hype or buzzwords. Reflect values like security, reliability and service-to-mission wherever the resume supports it.
+
+National-security discretion: many employees do sensitive work. Keep every claim general and recruiter-safe. NEVER invent or imply classified programs, clearances, codenames, agencies, or specifics that are not explicitly in the resume.
+
+LinkedIn branding best practices:
+- Headline (<=220 chars): role + specialization + value, separated by · or |, front-loaded with the most recruiter-searched keywords.
+- About: first person; open with a hook; tell a concise impact story; close with a clear call to action; 3-4 short paragraphs.
+- Experience bullets: start with a strong power verb; lead with quantified outcomes (%, $, scale) where the resume provides them; never fabricate numbers.
+- Skills: the 10 most recruiter-searched, role-relevant skills.
+- Connection note (<=280 chars): warm, specific, professional.
+- quick_wins: 3 concrete, brand-aligned FOCUS POINTS the employee should act on to strengthen their profile beyond the resume content.`;
+
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.status(204).end();
@@ -65,6 +81,8 @@ Company: ${company || 'not specified'}
 Mission: ${mission || 'not specified'}
 Keywords to include: ${keywords || 'professional growth, innovation'}
 Tone: ${tone || 'Professional & authoritative'}
+
+${BRAND_RULES}
 
 Resume:
 ---
