@@ -156,6 +156,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .chat-input-row input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:var(--font);font-size:13px}
 .chat-input-row input:focus{outline:none;border-color:var(--purple)}
 .chat-input-row .btn{padding:9px 16px}
+.disc{margin-top:14px;border-top:1px solid var(--border);padding-top:12px}
+.disc-card>summary,.disc>summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--text);list-style:none;user-select:none}
+.disc-card>summary::-webkit-details-marker,.disc>summary::-webkit-details-marker{display:none}
+.disc-card>summary::before,.disc>summary::before{content:'▸';color:var(--muted);display:inline-block;width:16px}
+.disc-card[open]>summary::before,.disc[open]>summary::before{content:'▾'}
+.disc-card[open]>summary{margin-bottom:14px}
 .footer{text-align:center;font-size:11px;color:var(--muted);margin-top:40px;padding-top:20px;border-top:1px solid var(--border)}
 </style>
 </head>
@@ -165,16 +171,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
     <div class="logo"><img src="/ursa-logo.png" alt="Ursa Mobile" class="logo-img"><div class="logo-text">· Brand Tools</div></div>
     <h1>Resume → <span>LinkedIn</span> Profile</h1>
     <p>Build a brand-aligned LinkedIn profile for Ursa Mobile employees — upload a resume, AI does the rest</p>
-  </div>
-
-  <div class="steps">
-    <div class="step-node"><div class="step-circle active" id="sc1">1</div><div class="step-label active" id="sl1">Upload</div></div>
-    <div class="step-line"></div>
-    <div class="step-node"><div class="step-circle" id="sc2">2</div><div class="step-label" id="sl2">Brand</div></div>
-    <div class="step-line"></div>
-    <div class="step-node"><div class="step-circle" id="sc3">3</div><div class="step-label" id="sl3">Generate</div></div>
-    <div class="step-line"></div>
-    <div class="step-node"><div class="step-circle" id="sc4">4</div><div class="step-label" id="sl4">Copy</div></div>
   </div>
 
   <div id="step1">
@@ -194,32 +190,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
       <div class="progress-bar" id="readProgress" style="display:none"><div class="progress-fill" id="readFill" style="width:0%"></div></div>
       <div style="font-size:13px;color:var(--muted);text-align:center;margin-top:8px" id="readStatus"></div>
     </div>
-    <button class="btn btn-accent" id="step1next" style="display:none;width:100%;justify-content:center" onclick="goStep(2)">Continue →</button>
-  </div>
-
-  <div id="step2" style="display:none">
-    <div class="card">
-      <div style="font-size:14px;font-weight:500;margin-bottom:16px;color:var(--muted)">Brand & tone settings</div>
-      <div class="brand-strip">
-        <div class="fg"><label>Company name</label><input id="b-company" value="Ursa Mobile"></div>
-        <div class="fg"><label>Mission / tagline</label><input id="b-mission" placeholder="What your company does"></div>
-      </div>
-      <div class="fg"><label>SEO keywords (comma-separated)</label><input id="b-kw" placeholder="enterprise mobility, SaaS, digital transformation, B2B"></div>
-      <div class="fg"><label>Voice / tone</label>
-        <div class="tone-row" id="toneRow">
-          <div class="tone-chip on" data-tone="Professional & authoritative">Professional</div>
-          <div class="tone-chip" data-tone="Warm & approachable">Warm</div>
-          <div class="tone-chip" data-tone="Bold & results-driven">Bold</div>
-          <div class="tone-chip" data-tone="Technical & precise">Technical</div>
-          <div class="tone-chip" data-tone="Creative & innovative">Creative</div>
-          <div class="tone-chip" data-tone="Leadership & strategic">Leadership</div>
-        </div>
-      </div>
-    </div>
-    <div style="display:flex;gap:10px">
-      <button class="btn btn-outline" onclick="goStep(1)">← Back</button>
-      <button class="btn btn-accent" style="flex:1;justify-content:center" onclick="goStep(3);runGeneration()">Generate LinkedIn profile ✨</button>
-    </div>
+    <button class="btn btn-accent" id="step1next" style="display:none;width:100%;justify-content:center" onclick="goStep(3);runGeneration()">Generate LinkedIn profile ✨</button>
   </div>
 
   <div id="step3" style="display:none">
@@ -287,22 +258,26 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
         <button type="button" class="bn-tab" id="bnTheme" onclick="toggleBannerTheme()">◐ Dark</button>
       </div>
       <div class="bn-preview"><canvas id="bannerCanvas" width="1584" height="396"></canvas></div>
-      <div class="bn-fields">
-        <label class="bn-field" style="grid-column:1/-1"><span>Name</span><input id="bn-name" type="text" maxlength="40"></label>
-        <label class="bn-field"><span>Line 1</span><input id="bn-b1" type="text" maxlength="60"></label>
-        <label class="bn-field"><span>Line 2</span><input id="bn-b2" type="text" maxlength="60"></label>
-        <label class="bn-field"><span>Line 3</span><input id="bn-b3" type="text" maxlength="60"></label>
-        <label class="bn-field" id="bn-code-wrap" style="display:none"><span>File code (Dossier)</span><input id="bn-code" type="text" maxlength="32"></label>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center">
+        <button class="btn btn-green btn-sm" onclick="downloadBanner()">⬇ Download banner</button>
+        <span style="font-size:11px;color:var(--muted)">1584×396 PNG · upload as your LinkedIn cover photo</span>
       </div>
-      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-        <button class="btn btn-green btn-sm" onclick="downloadBanner()">⬇ Download banner (1584×396 PNG)</button>
-        <button class="btn btn-outline btn-sm" onclick="resetBannerText()">↺ Reset text from profile</button>
-      </div>
+      <details class="disc">
+        <summary>✎ Edit banner text</summary>
+        <div class="bn-fields">
+          <label class="bn-field" style="grid-column:1/-1"><span>Name</span><input id="bn-name" type="text" maxlength="40"></label>
+          <label class="bn-field"><span>Line 1</span><input id="bn-b1" type="text" maxlength="60"></label>
+          <label class="bn-field"><span>Line 2</span><input id="bn-b2" type="text" maxlength="60"></label>
+          <label class="bn-field"><span>Line 3</span><input id="bn-b3" type="text" maxlength="60"></label>
+          <label class="bn-field" id="bn-code-wrap" style="display:none"><span>File code (Dossier)</span><input id="bn-code" type="text" maxlength="32"></label>
+        </div>
+        <button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="resetBannerText()">↺ Reset text from profile</button>
+      </details>
     </div>
 
     <!-- Copy kit -->
-    <div class="card">
-      <div style="font-size:14px;font-weight:600;margin-bottom:12px">📋 Copy kit · extras</div>
+    <details class="card disc-card">
+      <summary>📋 Copy kit · alt headline &amp; connection note</summary>
       <div class="section-block">
         <div class="section-label">💡 Alt headline</div>
         <div class="section-content" id="out-alt"><button class="copy-btn" onclick="cp('out-alt',this)">Copy</button><button class="tweak-btn" onclick="openTweak('headline_alt')">✦ Tweak</button></div>
@@ -313,23 +288,24 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
         <div class="section-content" id="out-connect"><button class="copy-btn" onclick="cp('out-connect',this)">Copy</button><button class="tweak-btn" onclick="openTweak('connection_note')">✦ Tweak</button></div>
         <div class="tweak-inline" id="tw-connection_note"><input placeholder="e.g. make it warmer and shorter" onkeydown="tweakKey(event,'connection_note')"><button class="btn btn-outline btn-sm" onclick="submitTweak('connection_note')">Apply</button></div>
       </div>
-    </div>
+    </details>
 
-    <!-- Tweak with AI (full width) -->
-    <div class="chat-panel">
-      <div class="chat-head"><span class="dot"></span>Tweak with AI · ask for changes or advice</div>
-      <div class="chat-log" id="chatLog">
-        <div class="chat-empty" id="chatEmpty">Ask me to refine anything —<br>"make the headline punchier", "shorten the About",<br>or "what keywords help for fintech roles?"</div>
+    <!-- Tweak with AI -->
+    <details class="card disc-card" open>
+      <summary>💬 Tweak with AI · ask for changes or advice</summary>
+      <div class="chat-panel" style="margin-top:12px">
+        <div class="chat-log" id="chatLog">
+          <div class="chat-empty" id="chatEmpty">Ask me to refine anything —<br>"make the headline punchier", "shorten the About",<br>or "what keywords help for fintech roles?"</div>
+        </div>
+        <div class="chat-input-row">
+          <input id="chatInput" placeholder="Type a tweak or question…" onkeydown="if(event.key==='Enter')sendChat()">
+          <button class="btn btn-accent" id="chatSend" onclick="sendChat()">Send</button>
+        </div>
       </div>
-      <div class="chat-input-row">
-        <input id="chatInput" placeholder="Type a tweak or question…" onkeydown="if(event.key==='Enter')sendChat()">
-        <button class="btn btn-accent" id="chatSend" onclick="sendChat()">Send</button>
-      </div>
-    </div>
+    </details>
     <div class="copy-all-row">
       <button class="btn btn-green" onclick="copyAll()">📋 Copy complete profile</button>
       <button class="btn btn-outline btn-sm" onclick="goStep(1);resetAll()">New resume</button>
-      <button class="btn btn-outline btn-sm" onclick="goStep(2)">Adjust brand</button>
     </div>
   </div>
 
@@ -337,6 +313,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 </div>
 
 <script>
+const COMPANY='Ursa Mobile';
 let resumeContent='';
 let selectedTone='Professional & authoritative';
 let generatedProfile=null;
@@ -350,13 +327,9 @@ document.querySelectorAll('.tone-chip').forEach(chip=>{
 });
 
 function goStep(n){
-  [1,2,3,4].forEach(i=>{
-    document.getElementById('step'+i).style.display=i===n?'':'none';
-    const sc=document.getElementById('sc'+i);
-    const sl=document.getElementById('sl'+i);
-    sc.className='step-circle'+(i<n?' done':i===n?' active':'');
-    sl.className='step-label'+(i===n?' active':'');
-    sc.textContent=i<n?'✓':i;
+  [1,3,4].forEach(i=>{
+    const el=document.getElementById('step'+i);
+    if(el) el.style.display=i===n?'':'none';
   });
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -441,9 +414,10 @@ async function readPDFAsText(file){
 }
 
 async function runGeneration(){
-  const company=document.getElementById('b-company').value.trim()||'Ursa Mobile';
-  const mission=document.getElementById('b-mission').value.trim();
-  const kw=document.getElementById('b-kw').value.trim();
+  // Ursa brand defaults are baked in (the API enforces the full brand voice).
+  const company=COMPANY;
+  const mission='Advanced National Security Solutions';
+  const kw='';
 
   const steps=[
     ['Reading your resume…','Extracting experience and achievements',15],
@@ -490,7 +464,7 @@ async function runGeneration(){
     title.textContent='Generation failed';
     sub.textContent=e.message||'Please try again';
     fill.style.background='var(--red)';
-    setTimeout(()=>goStep(2),2500);
+    setTimeout(()=>goStep(1),2500);
   }
 }
 
@@ -525,7 +499,7 @@ function renderOutput(p){
   document.getElementById('prev-av').textContent=initials(p.name||'');
   document.getElementById('prev-name').textContent=p.name||'';
   document.getElementById('prev-hl').textContent=p.headline||'';
-  const companyN=document.getElementById('b-company').value;
+  const companyN=COMPANY;
   document.getElementById('prev-meta').textContent=(p.location||'')+(companyN?' · '+companyN:'');
   const roleEl=document.getElementById('prev-role');
   if(roleEl) roleEl.textContent=(p.title||'')+(companyN?'  ·  '+companyN:'');
@@ -713,10 +687,14 @@ const BANNER_SERIF="'Spectral', serif";
 const BANNER_MONO="'IBM Plex Mono', monospace";
 const BN_ACCENT='#8FA0B8';
 
-// Low-poly URSA bear (viewBox 460×300, facing right), drawn as a wireframe.
-const BEAR={n0:[418,104],n1:[372,86],n2:[322,66],n3:[300,40],n4:[282,66],n5:[250,74],n6:[175,52],n7:[110,68],n8:[44,92],n9:[42,150],n10:[60,236],n11:[52,262],n12:[96,262],n13:[104,200],n14:[150,210],n15:[210,214],n16:[206,258],n17:[242,258],n18:[250,206],n19:[270,200],n20:[300,210],n21:[296,260],n22:[336,260],n23:[342,206],n24:[322,168],n25:[340,140],n26:[372,120],n27:[414,118]};
-const BEAR_OUTLINE=['n0','n1','n2','n3','n4','n5','n6','n7','n8','n9','n10','n11','n12','n13','n14','n15','n16','n17','n18','n19','n20','n21','n22','n23','n24','n25','n26','n27'];
-const BEAR_FACETS=[['n5','n24'],['n2','n26'],['n2','n5'],['n6','n24'],['n6','n19'],['n7','n14'],['n8','n13'],['n6','n8'],['n5','n19'],['n6','n14'],['n7','n19'],['n24','n19'],['n13','n14'],['n5','n25'],['n18','n15'],['n19','n23'],['n14','n15'],['n7','n8']];
+// Real low-poly URSA bear artwork (transparent wireframe) from the design bundle.
+let BEAR_IMG=null;
+const bearReady=new Promise(resolve=>{
+  const img=new Image();
+  img.onload=()=>{BEAR_IMG=img;resolve(true);if(generatedProfile&&typeof renderBannerStudio==='function')renderBannerStudio();};
+  img.onerror=()=>resolve(false);
+  img.src='/ursa-bear.png';
+});
 
 function colorsFor(dark){
   return { dark,
@@ -731,17 +709,22 @@ function downloadCanvas(c,name){
 function clip(ctx,t,maxW){t=t||'';if(ctx.measureText(t).width<=maxW)return t;while(t.length>1&&ctx.measureText(t+'…').width>maxW)t=t.slice(0,-1);return t+'…';}
 function setLS(ctx,px){try{ctx.letterSpacing=px+'px';}catch(e){}}
 function withA(ctx,a,fn){ctx.save();ctx.globalAlpha=a;fn();ctx.restore();}
-function bearColor(c){return c.dark?c.accent:c.ink;}
-
-function drawBear(ctx,bx,by,bw,bh,color,op){
-  const vbW=460,vbH=300,s=Math.min(bw/vbW,bh/vbH);
-  const ox=bx+(bw-vbW*s)/2, oy=by+(bh-vbH*s)/2;
-  const P=k=>[ox+BEAR[k][0]*s, oy+BEAR[k][1]*s];
-  ctx.save();ctx.globalAlpha=op;ctx.strokeStyle=color;ctx.lineWidth=1.4;ctx.lineJoin='round';ctx.lineCap='round';
-  ctx.beginPath();
-  BEAR_OUTLINE.forEach((k,i)=>{const q=P(k);i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]);});
-  ctx.closePath();ctx.stroke();
-  BEAR_FACETS.forEach(f=>{const a=P(f[0]),b=P(f[1]);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();});
+// Draw the real bear asset, contained in the slot. Dark theme uses the artwork
+// as-is (pale wireframe); light theme recolours it to ink (matches the design).
+function drawBear(ctx,bx,by,bw,bh,c,op){
+  if(!BEAR_IMG) return;
+  const iw=BEAR_IMG.naturalWidth, ih=BEAR_IMG.naturalHeight, s=Math.min(bw/iw,bh/ih);
+  const dw=iw*s, dh=ih*s, ox=bx+(bw-dw)/2, oy=by+(bh-dh)/2;
+  ctx.save();ctx.globalAlpha=op;
+  if(c.dark){
+    ctx.drawImage(BEAR_IMG,ox,oy,dw,dh);
+  } else {
+    const off=document.createElement('canvas');off.width=Math.max(1,Math.round(dw));off.height=Math.max(1,Math.round(dh));
+    const o=off.getContext('2d');
+    o.drawImage(BEAR_IMG,0,0,off.width,off.height);
+    o.globalCompositeOperation='source-in';o.fillStyle=c.ink;o.fillRect(0,0,off.width,off.height);
+    ctx.drawImage(off,ox,oy);
+  }
   ctx.restore();
 }
 function bgFill(ctx,W,H,c){
@@ -779,7 +762,7 @@ function urlText(ctx,x,y,c,align){
 
 function drawClassic(ctx,W,H,d,c){
   bgFill(ctx,W,H,c);ticks(ctx,W,H,c);
-  drawBear(ctx,W-52-520,(H-290)/2,520,290,bearColor(c),0.55);
+  drawBear(ctx,W-52-520,(H-290)/2,520,290,c,0.55);
   const M=56,colRight=W-540;
   wordmark(ctx,M,M,c,1);
   withA(ctx,0.14,()=>{ctx.fillStyle=c.ink;ctx.fillRect(M,120,360,1);});
@@ -798,7 +781,7 @@ function drawClassic(ctx,W,H,d,c){
 
 function drawEmblem(ctx,W,H,d,c){
   bgFill(ctx,W,H,c);
-  drawBear(ctx,(W-600)/2,(H-330)/2,600,330,bearColor(c),0.55*0.72);
+  drawBear(ctx,(W-600)/2,(H-330)/2,600,330,c,0.55*0.72);
   const cx=W/2;
   ctx.textAlign='center';ctx.textBaseline='alphabetic';
   ctx.font='700 '+(30*0.82)+'px '+BANNER_SANS;setLS(ctx,1.2*0.82);
@@ -817,7 +800,7 @@ function drawEmblem(ctx,W,H,d,c){
 
 function drawDossier(ctx,W,H,d,c){
   bgFill(ctx,W,H,c);
-  drawBear(ctx,W-36-560,(H-320)/2,560,320,bearColor(c),0.55);
+  drawBear(ctx,W-36-560,(H-320)/2,560,320,c,0.55);
   withA(ctx,0.9,()=>{ctx.fillStyle=c.accent;ctx.fillRect(56,56,2,H-112);});
   const x=88,right=W-620,top=56,bottom=H-56;
   wordmark(ctx,x,top,c,0.86);
@@ -865,13 +848,16 @@ function syncBannerFromProfile(){
 }
 async function renderBannerStudio(){
   if(document.fonts&&document.fonts.ready){try{await document.fonts.ready;}catch(e){}}
+  try{await bearReady;}catch(e){}
   const d=bnData();
   const cv=document.getElementById('bannerCanvas');
   if(cv) drawVariant(cv.getContext('2d'),1584,396,d,bannerState.variant,bannerState.dark);
   const mb=document.getElementById('mockBanner');
   if(mb){mb.textContent='';const mc=mkCanvas();drawVariant(mc.getContext('2d'),1584,396,d,bannerState.variant,bannerState.dark);mb.appendChild(mc);}
 }
-function downloadBanner(){
+async function downloadBanner(){
+  try{await bearReady;}catch(e){}
+  if(document.fonts&&document.fonts.ready){try{await document.fonts.ready;}catch(e){}}
   const c=mkCanvas();
   drawVariant(c.getContext('2d'),1584,396,bnData(),bannerState.variant,bannerState.dark);
   downloadCanvas(c,'ursa-linkedin-banner-'+bannerState.variant+(bannerState.dark?'-dark':'-light')+'.png');
