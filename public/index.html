@@ -92,6 +92,60 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px}
 .alert-info{background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.2);color:#93c5fd}
 .copy-all-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+/* Per-section tweak controls */
+.section-content .tweak-btn{position:absolute;top:8px;right:52px}
+.tweak-btn{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--muted);cursor:pointer;font-family:var(--font);transition:.15s}
+.tweak-btn:hover{color:var(--purple);border-color:var(--purple)}
+.tweak-inline{display:none;margin-top:8px;gap:6px}
+.tweak-inline.on{display:flex}
+.tweak-inline input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:7px 11px;color:var(--text);font-family:var(--font);font-size:12px}
+.tweak-inline input:focus{outline:none;border-color:var(--purple)}
+@keyframes flash{0%{box-shadow:0 0 0 3px var(--purple)}100%{box-shadow:0 0 0 0 rgba(139,92,246,0)}}
+.flash{animation:flash 1.4s ease-out;border-radius:8px}
+/* Full-width LinkedIn profile mock (light, authentic look) */
+.li-card{background:#fff;border:1px solid #d7dbe0;border-radius:12px;overflow:hidden;margin-bottom:16px;color:#1d2226}
+.li-banner-img{width:100%;aspect-ratio:1584/396;background:linear-gradient(135deg,var(--accent),var(--purple));position:relative}
+.li-banner-img canvas{display:block;width:100%;height:100%}
+.li-card-body{padding:0 24px 22px}
+.li-av-lg{width:104px;height:104px;border-radius:50%;border:4px solid #fff;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;color:#fff;font-size:34px;font-weight:700;margin-top:-52px;margin-bottom:8px}
+.li-id-row{display:flex;gap:12px;align-items:flex-start}
+.li-card .li-name{font-size:23px;font-weight:700;color:#1d2226}
+.li-card .li-hl{font-size:14px;color:#1d2226;margin:3px 0 4px;line-height:1.45}
+.li-card .li-meta{font-size:13px;color:#5e6670}
+.li-act{display:flex;gap:6px;flex-shrink:0}
+.li-copy,.li-tweak{border-radius:16px;padding:4px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);border:1px solid;background:#fff;white-space:nowrap}
+.li-copy{color:#0a66c2;border-color:#0a66c2}
+.li-copy:hover{background:#eaf3fb}
+.li-tweak{color:#7c3aed;border-color:#cbb8f5}
+.li-tweak:hover{background:#f3eefe}
+.li-section{border-top:1px solid #e6e9ec;padding:16px 0 4px;margin-top:14px}
+.li-sec-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.li-sec-head h3{font-size:18px;font-weight:700;color:#1d2226}
+.li-card .li-text{font-size:14px;line-height:1.65;color:#1d2226;white-space:pre-wrap}
+.li-exp-role{font-size:14px;font-weight:600;color:#1d2226;margin-bottom:4px}
+.li-card .li-skills{display:flex;flex-wrap:wrap;gap:6px}
+.li-sk2{background:#eef3f8;color:#0a66c2;border-radius:16px;padding:4px 12px;font-size:12px;font-weight:500}
+.li-card .tweak-inline input{background:#fff;border-color:#d7dbe0;color:#1d2226}
+/* Banner generator */
+.banner-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+@media(max-width:768px){.banner-grid{grid-template-columns:1fr}}
+.banner-item{border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg)}
+.banner-item canvas{display:block;width:100%;height:auto}
+.banner-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;font-size:11px;color:var(--muted)}
+/* Chat panel */
+.chat-panel{margin-top:16px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;overflow:hidden}
+.chat-head{padding:11px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:7px}
+.chat-head .dot{width:7px;height:7px;border-radius:50%;background:var(--purple)}
+.chat-log{padding:14px;display:flex;flex-direction:column;gap:10px;min-height:120px;max-height:300px;overflow-y:auto}
+.chat-empty{font-size:12px;color:var(--muted);line-height:1.6;text-align:center;margin:auto}
+.bubble{font-size:12.5px;line-height:1.55;padding:8px 12px;border-radius:12px;max-width:88%;white-space:pre-wrap;word-wrap:break-word}
+.bubble.user{align-self:flex-end;background:rgba(79,142,247,.14);border:1px solid rgba(79,142,247,.25);color:#cfe0fb;border-bottom-right-radius:4px}
+.bubble.ai{align-self:flex-start;background:var(--bg);border:1px solid var(--border);color:var(--text);border-bottom-left-radius:4px}
+.bubble.ai .edit-tag{display:inline-block;font-size:10px;font-weight:600;color:var(--purple);background:rgba(139,92,246,.12);border-radius:5px;padding:1px 6px;margin-bottom:4px}
+.chat-input-row{display:flex;gap:8px;padding:11px;border-top:1px solid var(--border)}
+.chat-input-row input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:var(--font);font-size:13px}
+.chat-input-row input:focus{outline:none;border-color:var(--purple)}
+.chat-input-row .btn{padding:9px 16px}
 .footer{text-align:center;font-size:11px;color:var(--muted);margin-top:40px;padding-top:20px;border-top:1px solid var(--border)}
 </style>
 </head>
@@ -169,46 +223,79 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
   <div id="step4" style="display:none">
     <div class="alert alert-info" id="scoreAlert"></div>
-    <div class="output-grid">
-      <div>
-        <div class="section-block">
-          <div class="section-label">📌 Headline <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;font-size:11px">(paste into LinkedIn headline)</span></div>
-          <div class="section-content" id="out-headline"><button class="copy-btn" onclick="cp('out-headline',this)">Copy</button></div>
-        </div>
-        <div class="section-block">
-          <div class="section-label">📝 About <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;font-size:11px">(paste into About section)</span></div>
-          <div class="section-content" id="out-about" style="max-height:220px;overflow-y:auto"><button class="copy-btn" onclick="cp('out-about',this)">Copy</button></div>
-        </div>
-        <div class="section-block">
-          <div class="section-label">💼 Experience bullets</div>
-          <div id="out-bullets" class="section-content"><button class="copy-btn" onclick="cp('out-bullets',this)">Copy</button></div>
-        </div>
-        <div class="section-block">
-          <div class="section-label">🔗 Connection note</div>
-          <div class="section-content" id="out-connect"><button class="copy-btn" onclick="cp('out-connect',this)">Copy</button></div>
-        </div>
-        <div class="section-block">
-          <div class="section-label">💡 Alt headline</div>
-          <div class="section-content" id="out-alt"><button class="copy-btn" onclick="cp('out-alt',this)">Copy</button></div>
-        </div>
-      </div>
-      <div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-family:var(--mono)">LinkedIn preview</div>
-        <div class="li-preview">
-          <div class="li-banner"></div>
-          <div class="li-hdr">
-            <div class="li-av" id="prev-av"></div>
+
+    <!-- Full-width LinkedIn profile mock -->
+    <div class="li-card">
+      <div class="li-banner-img" id="mockBanner"></div>
+      <div class="li-card-body">
+        <div class="li-av-lg" id="prev-av"></div>
+        <div class="li-id-row">
+          <div style="flex:1;min-width:0">
             <div class="li-name" id="prev-name"></div>
             <div class="li-hl" id="prev-hl"></div>
             <div class="li-meta" id="prev-meta"></div>
           </div>
-          <div class="li-sec"><div class="li-sec-title">About</div><div class="li-body" id="prev-about" style="max-height:120px;overflow:hidden;mask-image:linear-gradient(to bottom,black 70%,transparent)"></div></div>
-          <div class="li-sec"><div class="li-sec-title">Skills</div><div class="li-skills" id="prev-skills"></div></div>
+          <div class="li-act">
+            <button class="li-copy" onclick="cp('prev-hl',this)">Copy headline</button>
+            <button class="li-tweak" onclick="openTweak('headline')">✦ Tweak</button>
+          </div>
         </div>
-        <div style="margin-top:16px">
-          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-family:var(--mono)">Skills to add</div>
-          <div id="out-skills"></div>
+        <div class="tweak-inline" id="tw-headline"><input placeholder="What should change about the headline?" onkeydown="tweakKey(event,'headline')"><button class="btn btn-outline btn-sm" onclick="submitTweak('headline')">Apply</button></div>
+
+        <div class="li-section">
+          <div class="li-sec-head"><h3>About</h3><div class="li-act"><button class="li-copy" onclick="cp('out-about',this)">Copy</button><button class="li-tweak" onclick="openTweak('about')">✦ Tweak</button></div></div>
+          <div class="li-text" id="out-about"></div>
+          <div class="tweak-inline" id="tw-about"><input placeholder="e.g. shorten to 2 paragraphs, more confident" onkeydown="tweakKey(event,'about')"><button class="btn btn-outline btn-sm" onclick="submitTweak('about')">Apply</button></div>
         </div>
+
+        <div class="li-section">
+          <div class="li-sec-head"><h3>Experience</h3><div class="li-act"><button class="li-copy" onclick="cp('out-bullets',this)">Copy</button><button class="li-tweak" onclick="openTweak('experience_bullets')">✦ Tweak</button></div></div>
+          <div class="li-exp-role" id="prev-role"></div>
+          <div class="li-text" id="out-bullets"></div>
+          <div class="tweak-inline" id="tw-experience_bullets"><input placeholder="e.g. add a metric to each bullet" onkeydown="tweakKey(event,'experience_bullets')"><button class="btn btn-outline btn-sm" onclick="submitTweak('experience_bullets')">Apply</button></div>
+        </div>
+
+        <div class="li-section">
+          <div class="li-sec-head"><h3>Skills</h3><div class="li-act"><button class="li-copy" onclick="copySkills(this)">Copy</button><button class="li-tweak" onclick="openTweak('skills_featured')">✦ Tweak</button></div></div>
+          <div class="tweak-inline" id="tw-skills_featured"><input placeholder="e.g. add fintech skills, drop generic ones" onkeydown="tweakKey(event,'skills_featured')"><button class="btn btn-outline btn-sm" onclick="submitTweak('skills_featured')">Apply</button></div>
+          <div class="li-skills" id="out-skills"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ursa LinkedIn banners -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:4px">
+        <div style="font-size:14px;font-weight:600">🎨 Ursa LinkedIn banners</div>
+        <div style="font-size:11px;color:var(--muted)">1584×396 · download, then set as your LinkedIn cover photo</div>
+      </div>
+      <div id="bannerGrid" class="banner-grid"></div>
+    </div>
+
+    <!-- Copy kit -->
+    <div class="card">
+      <div style="font-size:14px;font-weight:600;margin-bottom:12px">📋 Copy kit · extras</div>
+      <div class="section-block">
+        <div class="section-label">💡 Alt headline</div>
+        <div class="section-content" id="out-alt"><button class="copy-btn" onclick="cp('out-alt',this)">Copy</button><button class="tweak-btn" onclick="openTweak('headline_alt')">✦ Tweak</button></div>
+        <div class="tweak-inline" id="tw-headline_alt"><input placeholder="What should change about the alt headline?" onkeydown="tweakKey(event,'headline_alt')"><button class="btn btn-outline btn-sm" onclick="submitTweak('headline_alt')">Apply</button></div>
+      </div>
+      <div class="section-block" style="margin-bottom:0">
+        <div class="section-label">🔗 Connection note</div>
+        <div class="section-content" id="out-connect"><button class="copy-btn" onclick="cp('out-connect',this)">Copy</button><button class="tweak-btn" onclick="openTweak('connection_note')">✦ Tweak</button></div>
+        <div class="tweak-inline" id="tw-connection_note"><input placeholder="e.g. make it warmer and shorter" onkeydown="tweakKey(event,'connection_note')"><button class="btn btn-outline btn-sm" onclick="submitTweak('connection_note')">Apply</button></div>
+      </div>
+    </div>
+
+    <!-- Tweak with AI (full width) -->
+    <div class="chat-panel">
+      <div class="chat-head"><span class="dot"></span>Tweak with AI · ask for changes or advice</div>
+      <div class="chat-log" id="chatLog">
+        <div class="chat-empty" id="chatEmpty">Ask me to refine anything —<br>"make the headline punchier", "shorten the About",<br>or "what keywords help for fintech roles?"</div>
+      </div>
+      <div class="chat-input-row">
+        <input id="chatInput" placeholder="Type a tweak or question…" onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="btn btn-accent" id="chatSend" onclick="sendChat()">Send</button>
       </div>
     </div>
     <div class="copy-all-row">
@@ -395,26 +482,26 @@ function renderOutput(p){
 
   const setContent=(id,text)=>{
     const el=document.getElementById(id);
-    const btn=el.querySelector('.copy-btn');
+    const btns=[...el.querySelectorAll('.copy-btn,.tweak-btn')];
     el.textContent=text||'';
-    el.appendChild(btn);
+    btns.forEach(b=>el.appendChild(b));
   };
 
-  setContent('out-headline',p.headline||'');
   setContent('out-about',p.about||'');
   setContent('out-bullets',(p.experience_bullets||[]).map(b=>'• '+b).join('\n'));
   setContent('out-connect',p.connection_note||'');
   setContent('out-alt',p.headline_alt||'');
 
-  renderPills('out-skills',(p.skills_featured||[]),'pill skill-pill');
+  renderPills('out-skills',(p.skills_featured||[]),'li-sk2');
 
   document.getElementById('prev-av').textContent=initials(p.name||'');
   document.getElementById('prev-name').textContent=p.name||'';
   document.getElementById('prev-hl').textContent=p.headline||'';
   const companyN=document.getElementById('b-company').value;
   document.getElementById('prev-meta').textContent=(p.location||'')+(companyN?' · '+companyN:'');
-  document.getElementById('prev-about').textContent=p.about||'';
-  renderPills('prev-skills',(p.skills_featured||[]).slice(0,8),'li-sk');
+  const roleEl=document.getElementById('prev-role');
+  if(roleEl) roleEl.textContent=(p.title||'')+(companyN?'  ·  '+companyN:'');
+  renderBanners();
 }
 
 function renderPills(id,items,cls){
@@ -457,6 +544,9 @@ function copyAll(){
 function resetAll(){
   resumeContent='';
   generatedProfile=null;
+  chatHistory=[];
+  const log=document.getElementById('chatLog');
+  if(log) log.innerHTML='<div class="chat-empty" id="chatEmpty">Ask me to refine anything —<br>"make the headline punchier", "shorten the About",<br>or "what keywords help for fintech roles?"</div>';
   document.getElementById('fileChip').style.display='none';
   document.getElementById('dropZone').classList.remove('has-file','drag');
   document.getElementById('step1next').style.display='none';
@@ -465,6 +555,197 @@ function resetAll(){
   document.getElementById('fileInput').value='';
   document.getElementById('pasteInput').value='';
   document.getElementById('pasteArea').classList.remove('on');
+}
+
+/* ===== Tweak with AI ===== */
+let chatHistory=[];
+let tweakBusy=false;
+
+// Which DOM nodes to re-flash when a profile field changes.
+const FIELD_EL={
+  headline:['prev-hl'],
+  headline_alt:['out-alt'],
+  about:['out-about'],
+  experience_bullets:['out-bullets'],
+  connection_note:['out-connect'],
+  skills_featured:['out-skills'],
+  name:['prev-name'],
+  location:['prev-meta'],
+  title:['prev-role']
+};
+const FIELD_LABEL={headline:'headline',headline_alt:'alt headline',about:'About',experience_bullets:'bullets',connection_note:'connection note',skills_featured:'skills',name:'name',location:'location',title:'title'};
+
+function openTweak(field){
+  const row=document.getElementById('tw-'+field);
+  if(!row) return;
+  const on=row.classList.toggle('on');
+  if(on){const i=row.querySelector('input');i.value='';i.focus();}
+}
+function tweakKey(e,field){
+  if(e.key==='Enter') submitTweak(field);
+  if(e.key==='Escape') document.getElementById('tw-'+field).classList.remove('on');
+}
+function submitTweak(field){
+  const row=document.getElementById('tw-'+field);
+  const input=row.querySelector('input');
+  const msg=input.value.trim();
+  if(!msg) return;
+  row.classList.remove('on');
+  callTweak(msg,field);
+}
+
+function sendChat(){
+  const input=document.getElementById('chatInput');
+  const msg=input.value.trim();
+  if(!msg) return;
+  input.value='';
+  callTweak(msg,null);
+}
+
+function addBubble(role,text,editedKeys){
+  const log=document.getElementById('chatLog');
+  const empty=document.getElementById('chatEmpty');
+  if(empty) empty.remove();
+  const b=document.createElement('div');
+  b.className='bubble '+(role==='user'?'user':'ai');
+  if(editedKeys&&editedKeys.length){
+    const tag=document.createElement('span');
+    tag.className='edit-tag';
+    tag.textContent='✦ edited: '+editedKeys.map(k=>FIELD_LABEL[k]||k).join(', ');
+    b.appendChild(tag);
+    b.appendChild(document.createTextNode(text||''));
+  } else {
+    b.textContent=text||'';
+  }
+  log.appendChild(b);
+  log.scrollTop=log.scrollHeight;
+  return b;
+}
+
+function flashFields(keys){
+  const seen=new Set();
+  keys.forEach(k=>(FIELD_EL[k]||[]).forEach(id=>seen.add(id)));
+  seen.forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.classList.remove('flash');
+    void el.offsetWidth;            // restart the animation
+    el.classList.add('flash');
+  });
+}
+
+async function callTweak(message,targetSection){
+  if(!generatedProfile||tweakBusy) return;
+  tweakBusy=true;
+  const sendBtn=document.getElementById('chatSend');
+  if(sendBtn){sendBtn.disabled=true;}
+  addBubble('user',message);
+  const pending=addBubble('ai','…');
+  chatHistory.push({role:'user',text:message});
+  try{
+    const res=await fetch('/api/tweak',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({profile:generatedProfile,message,history:chatHistory.slice(0,-1),targetSection:targetSection||undefined})
+    });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok) throw new Error(data.error||'Tweak failed');
+    pending.remove();
+    const reply=data.reply||(data.action==='edit'?'Done.':'');
+    if(data.action==='edit'&&data.changes&&Object.keys(data.changes).length){
+      const keys=Object.keys(data.changes);
+      Object.assign(generatedProfile,data.changes);
+      renderOutput(generatedProfile);
+      addBubble('ai',reply,keys);
+      flashFields(keys);
+    } else {
+      addBubble('ai',reply||'Let me know what you’d like to change.');
+    }
+    chatHistory.push({role:'assistant',text:reply});
+  } catch(e){
+    pending.remove();
+    addBubble('ai','⚠️ '+(e.message||'Something went wrong — try rephrasing.'));
+  } finally {
+    tweakBusy=false;
+    if(sendBtn){sendBtn.disabled=false;}
+  }
+}
+
+function copySkills(btn){
+  if(!generatedProfile) return;
+  navigator.clipboard.writeText((generatedProfile.skills_featured||[]).join(', ')).catch(()=>{});
+  const t=btn.textContent;btn.textContent='✓';setTimeout(()=>btn.textContent=t,1500);
+}
+
+/* ===== Ursa LinkedIn banner generator (1584×396) ===== */
+function bannerData(){
+  const p=generatedProfile||{};
+  return {
+    name:p.name||'Your Name',
+    headline:(p.headline||'').split(/[·|]/)[0].trim()||p.title||'',
+    company:(document.getElementById('b-company').value||'Ursa Mobile').trim()
+  };
+}
+async function renderBanners(){
+  const grid=document.getElementById('bannerGrid');
+  if(!grid) return;
+  if(document.fonts&&document.fonts.ready){try{await document.fonts.ready;}catch(e){}}
+  const d=bannerData();
+  // Mock banner uses style 1.
+  const mb=document.getElementById('mockBanner');
+  if(mb){mb.textContent='';const mc=mkCanvas();drawBannerA(mc.getContext('2d'),1584,396,d);mb.appendChild(mc);}
+  const styles=[drawBannerA,drawBannerB,drawBannerC];
+  grid.textContent='';
+  styles.forEach((fn,i)=>{
+    const item=document.createElement('div');item.className='banner-item';
+    const c=mkCanvas();fn(c.getContext('2d'),1584,396,d);
+    const row=document.createElement('div');row.className='banner-row';
+    const lbl=document.createElement('span');lbl.textContent='Style '+(i+1);
+    const btn=document.createElement('button');btn.className='btn btn-outline btn-sm';btn.textContent='⬇ Download';
+    btn.onclick=()=>downloadCanvas(c,'ursa-linkedin-banner-'+(i+1)+'.png');
+    row.appendChild(lbl);row.appendChild(btn);
+    item.appendChild(c);item.appendChild(row);grid.appendChild(item);
+  });
+}
+function mkCanvas(){const c=document.createElement('canvas');c.width=1584;c.height=396;return c;}
+function downloadCanvas(c,name){
+  c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);});
+}
+function lgrad(ctx,x0,y0,x1,y1,a,b){const g=ctx.createLinearGradient(x0,y0,x1,y1);g.addColorStop(0,a);g.addColorStop(1,b);return g;}
+function clip(ctx,t,maxW){t=t||'';if(ctx.measureText(t).width<=maxW)return t;while(t.length>1&&ctx.measureText(t+'…').width>maxW)t=t.slice(0,-1);return t+'…';}
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+
+function drawBannerA(ctx,W,H,d){
+  ctx.fillStyle=lgrad(ctx,0,0,W,H,'#4f8ef7','#8b5cf6');ctx.fillRect(0,0,W,H);
+  ctx.save();ctx.globalAlpha=.13;ctx.fillStyle='#fff';ctx.font='800 470px "DM Sans"';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText('U',W-20,H/2+30);ctx.restore();
+  ctx.textAlign='left';ctx.textBaseline='top';
+  ctx.fillStyle='rgba(255,255,255,.85)';ctx.font='500 26px "DM Mono"';ctx.fillText((d.company||'Ursa Mobile').toUpperCase(),70,58);
+  ctx.fillStyle='#fff';ctx.font='700 78px "DM Sans"';ctx.fillText(clip(ctx,d.name,W-520),68,150);
+  ctx.fillStyle='rgba(255,255,255,.92)';ctx.font='400 32px "DM Sans"';ctx.fillText(clip(ctx,d.headline,W-520),70,250);
+  ctx.fillStyle='rgba(255,255,255,.72)';ctx.font='500 22px "DM Mono"';ctx.fillText('ursamobile.com',70,H-52);
+}
+function drawBannerB(ctx,W,H,d){
+  ctx.fillStyle='#0d0f12';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=lgrad(ctx,0,0,0,H,'#4f8ef7','#8b5cf6');ctx.fillRect(0,0,16,H);
+  ctx.fillStyle=lgrad(ctx,70,56,134,120,'#4f8ef7','#8b5cf6');roundRect(ctx,70,56,64,64,15);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='700 36px "DM Sans"';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('U',102,90);
+  ctx.textAlign='left';ctx.textBaseline='top';
+  ctx.fillStyle='#5a6280';ctx.font='500 24px "DM Mono"';ctx.fillText((d.company||'Ursa Mobile')+' · Brand',150,74);
+  ctx.fillStyle='#e2e6f0';ctx.font='700 74px "DM Sans"';ctx.fillText(clip(ctx,d.name,W-140),70,168);
+  ctx.fillStyle='#93c5fd';ctx.font='400 30px "DM Sans"';ctx.fillText(clip(ctx,d.headline,W-140),72,262);
+  ctx.fillStyle='#5a6280';ctx.font='500 22px "DM Mono"';ctx.fillText('ursamobile.com',72,H-50);
+}
+function drawBannerC(ctx,W,H,d){
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+  const PW=560;
+  ctx.fillStyle=lgrad(ctx,0,0,PW,H,'#4f8ef7','#8b5cf6');ctx.fillRect(0,0,PW,H);
+  ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.font='800 156px "DM Sans"';ctx.fillText('U',PW/2,H/2-22);
+  ctx.font='500 26px "DM Mono"';ctx.fillText((d.company||'Ursa Mobile').toUpperCase(),PW/2,H/2+92);
+  ctx.textAlign='left';ctx.textBaseline='top';
+  ctx.fillStyle='#1d2226';ctx.font='700 66px "DM Sans"';ctx.fillText(clip(ctx,d.name,W-PW-90),PW+58,H/2-92);
+  ctx.fillStyle='#0a66c2';ctx.font='400 30px "DM Sans"';ctx.fillText(clip(ctx,d.headline,W-PW-90),PW+60,H/2+6);
+  ctx.fillStyle='#5e6670';ctx.font='500 22px "DM Mono"';ctx.fillText('ursamobile.com',PW+60,H-58);
 }
 </script>
 </body>
