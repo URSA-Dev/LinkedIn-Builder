@@ -385,7 +385,13 @@ function initials(name){
 
 function renderOutput(p){
   const scoreColor=p.score>=75?'#22c55e':p.score>=50?'#f59e0b':'#ef4444';
-  document.getElementById('scoreAlert').innerHTML=`<strong style="color:${scoreColor}">Profile score: ${p.score||'—'}/100</strong> · ${p.score_rationale||''}`;
+  const scoreEl=document.getElementById('scoreAlert');
+  scoreEl.textContent='';
+  const strong=document.createElement('strong');
+  strong.style.color=scoreColor;
+  strong.textContent='Profile score: '+(p.score||'—')+'/100';
+  scoreEl.appendChild(strong);
+  scoreEl.appendChild(document.createTextNode(' · '+(p.score_rationale||'')));
 
   const setContent=(id,text)=>{
     const el=document.getElementById(id);
@@ -400,7 +406,7 @@ function renderOutput(p){
   setContent('out-connect',p.connection_note||'');
   setContent('out-alt',p.headline_alt||'');
 
-  document.getElementById('out-skills').innerHTML=(p.skills_featured||[]).map(s=>`<span class="pill skill-pill">${s}</span>`).join('');
+  renderPills('out-skills',(p.skills_featured||[]),'pill skill-pill');
 
   document.getElementById('prev-av').textContent=initials(p.name||'');
   document.getElementById('prev-name').textContent=p.name||'';
@@ -408,7 +414,19 @@ function renderOutput(p){
   const companyN=document.getElementById('b-company').value;
   document.getElementById('prev-meta').textContent=(p.location||'')+(companyN?' · '+companyN:'');
   document.getElementById('prev-about').textContent=p.about||'';
-  document.getElementById('prev-skills').innerHTML=(p.skills_featured||[]).slice(0,8).map(s=>`<span class="li-sk">${s}</span>`).join('');
+  renderPills('prev-skills',(p.skills_featured||[]).slice(0,8),'li-sk');
+}
+
+function renderPills(id,items,cls){
+  const host=document.getElementById(id);
+  host.textContent='';
+  for(const s of items){
+    if(typeof s!=='string')continue;
+    const span=document.createElement('span');
+    span.className=cls;
+    span.textContent=s;
+    host.appendChild(span);
+  }
 }
 
 function cp(id,btn){

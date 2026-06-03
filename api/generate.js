@@ -1,14 +1,11 @@
 export const config = { runtime: 'edge' };
 
 export default async function handler(req) {
+  // Same-origin only: the frontend is served from this same Vercel deployment,
+  // so no cross-origin CORS headers are emitted. This prevents other sites from
+  // using this credentialed (API-key-bearing) proxy.
   if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      },
-    });
+    return new Response(null, { status: 204 });
   }
 
   if (req.method !== 'POST') {
@@ -110,10 +107,7 @@ Return ONLY the JSON object.`;
 
     return new Response(clean, {
       status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (e) {
     return new Response(JSON.stringify({ error: 'Generation failed', detail: e.message }), {
